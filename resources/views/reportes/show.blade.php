@@ -429,7 +429,6 @@
             </div>
         @endif
 
-        <!-- Header do Reporte -->
         <div class="reporte-header">
             <span class="protocolo-badge">Protocolo: {{ $reporte->protocolo }}</span>
 
@@ -479,9 +478,7 @@
         </div>
 
         <div class="content-grid">
-            <!-- Conteúdo Principal -->
             <div class="main-content">
-                <!-- Descrição -->
                 <div class="card">
                     <h2 class="card-title">Descrição do Problema</h2>
                     <p class="descricao-text">{{ $reporte->descricao }}</p>
@@ -494,7 +491,6 @@
                     @endif
                 </div>
 
-                <!-- Localização -->
                 <div class="card">
                     <h2 class="card-title">Localização</h2>
                     <div class="localizacao-text">
@@ -547,9 +543,7 @@
                 </div>
             </div>
 
-            <!-- Sidebar -->
             <div class="sidebar">
-                <!-- Informações Adicionais -->
                 <div class="card">
                     <h3 class="card-title">Informações</h3>
                     <ul class="info-list">
@@ -600,7 +594,6 @@
         </div>
     </div>
 
-    <!-- Modal de Imagem -->
     <div id="imageModal" class="modal">
         <span class="close-modal" onclick="fecharModal()">&times;</span>
         <img class="modal-content" id="modalImage">
@@ -610,7 +603,7 @@
 @section('scripts')
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        // Mapa
+
         @if($reporte->latitude && $reporte->longitude)
         document.addEventListener('DOMContentLoaded', function() {
             var map = L.map('map').setView([{{ $reporte->latitude }}, {{ $reporte->longitude }}], 15);
@@ -625,7 +618,6 @@
         });
         @endif
 
-        // Modal de imagem
         function abrirModal(src) {
             document.getElementById('imageModal').style.display = 'block';
             document.getElementById('modalImage').src = src;
@@ -635,7 +627,7 @@
             document.getElementById('imageModal').style.display = 'none';
         }
 
-        // Compartilhar
+
         function compartilhar() {
             if (navigator.share) {
                 navigator.share({
@@ -644,13 +636,12 @@
                     url: window.location.href
                 });
             } else {
-                // Copiar URL
+
                 navigator.clipboard.writeText(window.location.href);
                 alert('Link copiado para a área de transferência!');
             }
         }
 
-        // Copiar protocolo
         function copiarProtocolo() {
             navigator.clipboard.writeText('{{ $reporte->protocolo }}');
             alert('Protocolo copiado: {{ $reporte->protocolo }}');

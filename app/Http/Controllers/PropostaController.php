@@ -8,21 +8,17 @@ use Illuminate\Support\Facades\Validator;
 
 class PropostaController extends Controller
 {
-    /**
-     * Exibe a lista de propostas
-     */
+
     public function index(Request $request)
     {
         $query = DB::table('propostas')
             ->select('propostas.*')
             ->orderBy('propostas.created_at', 'desc');
 
-        // Filtro por status
         if ($request->filled('status')) {
             $query->where('propostas.status', $request->status);
         }
 
-        // Filtro de busca
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -32,10 +28,9 @@ class PropostaController extends Controller
             });
         }
 
-        // Paginação
+
         $propostas = $query->paginate(9);
 
-        // Se o usuário estiver logado, verificar quais propostas ele já votou
         $votosUsuario = [];
         if (session('user_id')) {
             $votosUsuario = DB::table('votos')
@@ -44,14 +39,12 @@ class PropostaController extends Controller
                 ->toArray();
         }
 
-        // Adicionar informação de voto do usuário em cada proposta
         foreach ($propostas as $proposta) {
             $proposta->usuario_votou = isset($votosUsuario[$proposta->id]) ? $votosUsuario[$proposta->id] : null;
             $proposta->total_votos = $proposta->total_votos_favoravel +
                 $proposta->total_votos_contrario +
                 $proposta->total_votos_neutro;
 
-            // Calcular porcentagens
             if ($proposta->total_votos > 0) {
                 $proposta->percentual_favoravel = round(($proposta->total_votos_favoravel / $proposta->total_votos) * 100);
                 $proposta->percentual_contrario = round(($proposta->total_votos_contrario / $proposta->total_votos) * 100);
@@ -63,7 +56,6 @@ class PropostaController extends Controller
             }
         }
 
-        // Estatísticas
         $stats = [
             'total' => DB::table('propostas')->count(),
             'em_votacao' => DB::table('propostas')->where('status', 'em_votacao')->count(),
@@ -74,9 +66,6 @@ class PropostaController extends Controller
         return view('propostas.index', compact('propostas', 'stats'));
     }
 
-    /**
-     * Exibe os detalhes de uma proposta
-     */
     public function show($id)
     {
         $proposta = DB::table('propostas')
@@ -88,7 +77,6 @@ class PropostaController extends Controller
                 ->with('error', 'Proposta não encontrada');
         }
 
-        // Verificar se o usuário já votou
         $votoUsuario = null;
         if (session('user_id')) {
             $voto = DB::table('votos')
@@ -99,7 +87,6 @@ class PropostaController extends Controller
             $votoUsuario = $voto ? $voto->voto : null;
         }
 
-        // Calcular estatísticas de votos
         $proposta->total_votos = $proposta->total_votos_favoravel +
             $proposta->total_votos_contrario +
             $proposta->total_votos_neutro;
@@ -114,7 +101,6 @@ class PropostaController extends Controller
             $proposta->percentual_neutro = 0;
         }
 
-        // Buscar últimos votantes (opcional - apenas contagem)
         $ultimosVotantes = DB::table('votos')
             ->select('users.name', 'votos.voto', 'votos.created_at')
             ->join('users', 'votos.user_id', '=', 'users.id')
@@ -126,18 +112,13 @@ class PropostaController extends Controller
         return view('propostas.show', compact('proposta', 'votoUsuario', 'ultimosVotantes'));
     }
 
-    /**
-     * Registra ou atualiza o voto do usuário
-     */
     public function votar(Request $request, $id)
     {
-        // Verifica se está logado
         if (!session('user_id')) {
             return redirect()->route('login')
                 ->with('error', 'Você precisa estar logado para votar');
         }
 
-        // Validação
         $validator = Validator::make($request->all(), [
             'voto' => 'required|in:favoravel,contrario,neutro'
         ], [
@@ -149,7 +130,6 @@ class PropostaController extends Controller
             return back()->withErrors($validator);
         }
 
-        // Verificar se a proposta existe e está em votação
         $proposta = DB::table('propostas')->find($id);
 
         if (!$proposta) {
@@ -160,7 +140,6 @@ class PropostaController extends Controller
             return back()->with('error', 'Esta proposta não está mais em votação');
         }
 
-        // Verificar se a data de votação ainda está válida
         if ($proposta->data_fim_votacao && $proposta->data_fim_votacao < date('Y-m-d')) {
             return back()->with('error', 'O período de votação desta proposta já encerrou');
         }
@@ -168,14 +147,12 @@ class PropostaController extends Controller
         try {
             DB::beginTransaction();
 
-            // Verificar se o usuário já votou
             $votoExistente = DB::table('votos')
                 ->where('user_id', session('user_id'))
                 ->where('proposta_id', $id)
                 ->first();
 
             if ($votoExistente) {
-                // Atualizar voto existente
                 DB::table('votos')
                     ->where('user_id', session('user_id'))
                     ->where('proposta_id', $id)
@@ -186,7 +163,6 @@ class PropostaController extends Controller
 
                 $mensagem = 'Seu voto foi atualizado com sucesso!';
             } else {
-                // Inserir novo voto
                 DB::table('votos')->insert([
                     'user_id' => session('user_id'),
                     'proposta_id' => $id,
@@ -208,9 +184,6 @@ class PropostaController extends Controller
         }
     }
 
-    /**
-     * Remove o voto do usuário
-     */
     public function removerVoto($id)
     {
         if (!session('user_id')) {
@@ -230,9 +203,6 @@ class PropostaController extends Controller
         }
     }
 
-    /**
-     * Exibe propostas que o usuário votou
-     */
     public function minhasVotacoes()
     {
         if (!session('user_id')) {
@@ -246,7 +216,6 @@ class PropostaController extends Controller
             ->orderBy('votos.created_at', 'desc')
             ->paginate(9);
 
-        // Adicionar estatísticas de cada proposta
         foreach ($propostas as $proposta) {
             $proposta->total_votos = $proposta->total_votos_favoravel +
                 $proposta->total_votos_contrario +
@@ -259,7 +228,6 @@ class PropostaController extends Controller
             }
         }
 
-        // Estatísticas do usuário
         $stats = [
             'total_votos' => DB::table('votos')->where('user_id', session('user_id'))->count(),
             'favoravel' => DB::table('votos')->where('user_id', session('user_id'))->where('voto', 'favoravel')->count(),

@@ -144,7 +144,6 @@
             background: #1d4ed8;
         }
 
-        /* Lista de Reportes */
         .reportes-list {
             display: flex;
             flex-direction: column;
@@ -422,13 +421,11 @@
 
 @section('content')
     <div class="meus-reportes-container">
-        <!-- Header -->
         <div class="page-header">
             <h1 class="page-title">📋 Meus Reportes</h1>
             <p class="page-subtitle">Acompanhe o status de todos os seus reportes</p>
         </div>
 
-        <!-- Estatísticas -->
         <div class="stats-container">
             <a href="{{ route('reportes.meus') }}" class="stat-card {{ !request('status') ? 'active' : '' }}">
                 <div class="stat-value">{{ $stats['total'] }}</div>
@@ -461,8 +458,7 @@
             </a>
         </div>
 
-        <!-- Controles -->
-        <div class="controls-section">
+         <div class="controls-section">
             <div class="filter-tabs">
                 <a href="{{ route('reportes.meus') }}" class="filter-tab {{ !request('status') ? 'active' : '' }}">
                     Todos
@@ -490,7 +486,6 @@
             </a>
         </div>
 
-        <!-- Lista de Reportes -->
         @if($reportes->count() > 0)
             <div class="reportes-list">
                 @foreach($reportes as $reporte)
@@ -541,7 +536,6 @@
                 @endforeach
             </div>
 
-            <!-- Paginação -->
             @if($reportes->hasPages())
                 <div class="pagination">
                     {{ $reportes->links() }}
@@ -549,7 +543,6 @@
             @endif
 
         @else
-            <!-- Estado Vazio -->
             <div class="empty-state">
                 <div class="empty-icon">📭</div>
                 <h2 class="empty-title">

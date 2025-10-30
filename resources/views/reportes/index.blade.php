@@ -425,13 +425,11 @@
 
 @section('content')
     <div class="reportes-container">
-        <!-- Header -->
         <div class="page-header">
             <h1 class="page-title">🌆 Reportes da Cidade</h1>
             <p class="page-subtitle">Veja todos os problemas reportados pela comunidade</p>
         </div>
 
-        <!-- Busca por Protocolo -->
         <div class="protocolo-search">
             <h2 class="protocolo-search-title">🔍 Buscar por Protocolo</h2>
             <form action="{{ route('reportes.buscar') }}" method="POST" class="protocolo-form">
@@ -445,7 +443,6 @@
             </form>
         </div>
 
-        <!-- Filtros -->
         <div class="filters-section">
             <div class="filters-header">
                 <h3 class="filters-title">🎯 Filtros</h3>
@@ -492,7 +489,6 @@
             </form>
         </div>
 
-        <!-- Lista de Reportes -->
         @if($reportes->count() > 0)
             <div class="reportes-grid">
                 @foreach($reportes as $reporte)
@@ -543,7 +539,6 @@
                 @endforeach
             </div>
 
-            <!-- Paginação -->
             @if($reportes->hasPages())
                 <div class="pagination">
                     {{ $reportes->links() }}
@@ -551,7 +546,6 @@
             @endif
 
         @else
-            <!-- Estado Vazio -->
             <div class="empty-state">
                 <div class="empty-icon">🔍</div>
                 <h2 class="empty-title">Nenhum reporte encontrado</h2>
@@ -575,11 +569,9 @@
 
 @section('scripts')
     <script>
-        // Auto-submit dos filtros quando mudarem (opcional)
         document.querySelectorAll('.filter-select').forEach(select => {
             select.addEventListener('change', function() {
-                // Você pode descomentar a linha abaixo se quiser que os filtros sejam aplicados automaticamente
-                // this.closest('form').submit();
+
             });
         });
     </script>

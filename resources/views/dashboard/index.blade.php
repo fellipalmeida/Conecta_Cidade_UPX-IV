@@ -307,13 +307,11 @@
 
 @section('content')
     <div class="dashboard-container">
-        <!-- Welcome Section -->
         <div class="welcome-section">
             <h1>👋 Olá, {{ session('user_name') }}!</h1>
             <p>Bem-vindo de volta ao Conecta Cidade. Veja o resumo das suas atividades e continue ajudando a melhorar nossa cidade.</p>
         </div>
 
-        <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Meus Reportes</div>
@@ -332,8 +330,7 @@
                 <div class="stat-value">{{ $stats['total_votos'] }}</div>
             </div>
         </div>
-
-        <!-- Quick Actions -->
+        >
         <h2 class="section-title">Ações Rápidas</h2>
         <div class="quick-actions">
             <a href="{{ route('reportes.create') }}" class="action-btn">
@@ -366,9 +363,7 @@
             </a>
         </div>
 
-        <!-- Content Grid -->
         <div class="content-grid">
-            <!-- Meus Últimos Reportes -->
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">Meus Últimos Reportes</h2>
@@ -404,7 +399,6 @@
                 @endif
             </div>
 
-            <!-- Propostas em Votação -->
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">Propostas em Votação</h2>
@@ -440,7 +434,6 @@
             </div>
         </div>
 
-        <!-- Atividades Recentes da Comunidade -->
         <div class="card">
             <div class="card-header">
                 <h2 class="card-title">Atividades Recentes da Comunidade</h2>

@@ -7,9 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    /**
-     * Exibe o dashboard do usuário logado
-     */
+
     public function index()
     {
         if (!session('user_id')) {
@@ -18,7 +16,6 @@ class DashboardController extends Controller
 
         $userId = session('user_id');
 
-        // Estatísticas do usuário
         $stats = [
             'total_reportes' => DB::table('reportes')
                 ->where('user_id', $userId)
@@ -43,7 +40,6 @@ class DashboardController extends Controller
                 ->count(),
         ];
 
-        // Últimos reportes do usuário
         $ultimosReportes = DB::table('reportes')
             ->select('reportes.*', 'categorias.nome as categoria_nome', 'categorias.icone')
             ->join('categorias', 'reportes.categoria_id', '=', 'categorias.id')
@@ -52,7 +48,6 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Propostas em votação (para o usuário participar)
         $propostasEmVotacao = DB::table('propostas')
             ->where('status', 'em_votacao')
             ->where(function($query) {
@@ -63,7 +58,6 @@ class DashboardController extends Controller
             ->limit(3)
             ->get();
 
-        // Verificar quais propostas o usuário já votou
         $votosUsuario = DB::table('votos')
             ->where('user_id', $userId)
             ->pluck('voto', 'proposta_id')
@@ -73,7 +67,6 @@ class DashboardController extends Controller
             $proposta->usuario_votou = isset($votosUsuario[$proposta->id]) ? $votosUsuario[$proposta->id] : null;
         }
 
-        // Atividades recentes na plataforma (reportes de outros usuários)
         $atividadesRecentes = DB::table('reportes')
             ->select('reportes.*', 'users.name as usuario_nome', 'categorias.nome as categoria_nome', 'categorias.icone')
             ->join('users', 'reportes.user_id', '=', 'users.id')

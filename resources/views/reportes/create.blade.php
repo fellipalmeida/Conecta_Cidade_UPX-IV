@@ -369,7 +369,6 @@
             @csrf
 
             <div class="form-card">
-                <!-- Informações Básicas -->
                 <div class="form-section">
                     <h2 class="section-title">
                         <span>📝</span>
@@ -411,7 +410,6 @@
                     </div>
                 </div>
 
-                <!-- Categoria -->
                 <div class="form-section">
                     <h2 class="section-title">
                         <span>📂</span>
@@ -440,7 +438,6 @@
                     @enderror
                 </div>
 
-                <!-- Urgência -->
                 <div class="form-section">
                     <h2 class="section-title">
                         <span>⚠️</span>
@@ -493,7 +490,6 @@
                     @enderror
                 </div>
 
-                <!-- Localização -->
                 <div class="form-section">
                     <h2 class="section-title">
                         <span>📍</span>
@@ -533,7 +529,6 @@
                     </div>
                 </div>
 
-                <!-- Upload de Imagem -->
                 <div class="form-section">
                     <h2 class="section-title">
                         <span>📷</span>
@@ -578,29 +573,23 @@
 @section('scripts')
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        // Inicializar mapa
         var map;
         var marker;
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Coordenadas padrão (centro da cidade)
             var defaultLat = -23.5505;
             var defaultLng = -46.6333;
 
-            // Inicializar o mapa
             map = L.map('map').setView([defaultLat, defaultLng], 13);
 
-            // Adicionar camada do OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
-            // Adicionar evento de clique no mapa
             map.on('click', function(e) {
                 adicionarMarcador(e.latlng.lat, e.latlng.lng);
             });
 
-            // Se já houver coordenadas (old values), adicionar marcador
             var oldLat = document.getElementById('latitude').value;
             var oldLng = document.getElementById('longitude').value;
             if (oldLat && oldLng) {
@@ -609,19 +598,15 @@
         });
 
         function adicionarMarcador(lat, lng) {
-            // Remover marcador anterior se existir
             if (marker) {
                 map.removeLayer(marker);
             }
 
-            // Adicionar novo marcador
             marker = L.marker([lat, lng]).addTo(map);
 
-            // Atualizar campos hidden
             document.getElementById('latitude').value = lat;
             document.getElementById('longitude').value = lng;
 
-            // Centralizar mapa no marcador
             map.setView([lat, lng], 15);
         }
 
@@ -633,7 +618,6 @@
                 return;
             }
 
-            // Usar API de geocoding (você pode substituir por outra API)
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}&limit=1`)
                 .then(response => response.json())
                 .then(data => {
@@ -670,7 +654,6 @@
             }
         }
 
-        // Validação do formulário
         document.getElementById('reporteForm').addEventListener('submit', function(e) {
             var lat = document.getElementById('latitude').value;
             var lng = document.getElementById('longitude').value;
