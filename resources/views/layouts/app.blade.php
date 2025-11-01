@@ -93,7 +93,7 @@
         }
 
         .nav-links a:hover {
-            color: var(--primary-color);
+            color: white;
         }
 
         .btn {
@@ -114,8 +114,7 @@
 
         .btn-primary:hover {
             background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.17);
         }
 
         .btn-outline {
@@ -125,8 +124,7 @@
         }
 
         .btn-outline:hover {
-            background: var(--primary-color);
-            color: var(--white);
+           background-color: #1D4ED8;
         }
 
         .btn-danger {
@@ -302,6 +300,8 @@
             background: var(--light-gray);
             margin: 0.5rem 0;
         }
+
+
     </style>
 
     @yield('styles')
@@ -311,7 +311,7 @@
 <header class="header">
     <nav class="navbar">
         <a href="{{ route('home') }}" class="logo">
-            <div class="logo-icon">CC</div>
+            <div>♾️</div>
             Conecta Cidade
         </a>
 
@@ -351,8 +351,8 @@
                 <li><a href="{{ route('home') }}">Início</a></li>
                 <li><a href="#sobre">Sobre</a></li>
                 <li><a href="#como-funciona">Como Funciona</a></li>
-                <li><a href="{{ route('login') }}" class="btn btn-outline">Entrar</a></li>
-                <li><a href="{{ route('register') }}" class="btn btn-primary">Cadastrar</a></li>
+                <li><a href="{{ route('login') }}" class="btn btn-outline ">Entrar</a></li>
+                <li><a href="{{ route('register') }}" class="btn btn-primary" style="color: white;">Cadastrar</a></li>
             @endif
         </ul>
     </nav>

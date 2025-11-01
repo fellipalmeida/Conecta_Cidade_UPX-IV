@@ -116,6 +116,25 @@
             gap: 2rem;
         }
 
+        .reporte-container .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .content-grid > .sidebar {
+            position: static;
+            top: auto;
+        }
+
+
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
         .main-content {
             display: flex;
             flex-direction: column;
@@ -379,6 +398,7 @@
             color: #bbb;
         }
 
+
         @media (max-width: 968px) {
             .content-grid {
                 grid-template-columns: 1fr;
@@ -417,17 +437,7 @@
 
 @section('content')
     <div class="reporte-container">
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
 
-        @if(session('error'))
-            <div class="alert alert-error">
-                {{ session('error') }}
-            </div>
-        @endif
 
         <div class="reporte-header">
             <span class="protocolo-badge">Protocolo: {{ $reporte->protocolo }}</span>
@@ -478,8 +488,8 @@
         </div>
 
         <div class="content-grid">
-            <div class="main-content">
-                <div class="card">
+            <div>
+                <div class="card" style="margin-bottom: 10px;">
                     <h2 class="card-title">Descrição do Problema</h2>
                     <p class="descricao-text">{{ $reporte->descricao }}</p>
 
@@ -491,7 +501,7 @@
                     @endif
                 </div>
 
-                <div class="card">
+                <div class="card" style="margin-bottom: 10px;" >
                     <h2 class="card-title">Localização</h2>
                     <div class="localizacao-text">
                         <span>📍</span>
@@ -504,7 +514,7 @@
                 </div>
 
                 <!-- Comentários -->
-                <div class="comentarios-section">
+                <div class="comentarios-section" style="margin-bottom: 10px;">
                     <h2 class="card-title">Comentários ({{ $comentarios->count() }})</h2>
 
                     @if(session('user_id'))
@@ -543,7 +553,7 @@
                 </div>
             </div>
 
-            <div class="sidebar">
+
                 <div class="card">
                     <h3 class="card-title">Informações</h3>
                     <ul class="info-list">
@@ -574,22 +584,8 @@
                         </span>
                         </li>
                     </ul>
-                </div>
 
-                <!-- Ações -->
-                @if(session('user_id'))
-                    <div class="card">
-                        <h3 class="card-title">Ações</h3>
-                        <div class="action-buttons" style="flex-direction: column;">
-                            <button class="btn btn-secondary" onclick="compartilhar()">
-                                📤 Compartilhar
-                            </button>
-                            <button class="btn btn-secondary" onclick="copiarProtocolo()">
-                                📋 Copiar Protocolo
-                            </button>
-                        </div>
-                    </div>
-                @endif
+
             </div>
         </div>
     </div>

@@ -330,7 +330,7 @@
                 <div class="stat-value">{{ $stats['total_votos'] }}</div>
             </div>
         </div>
-        >
+
         <h2 class="section-title">Ações Rápidas</h2>
         <div class="quick-actions">
             <a href="{{ route('reportes.create') }}" class="action-btn">

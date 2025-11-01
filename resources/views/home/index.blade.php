@@ -53,7 +53,7 @@
 
         .btn-hero-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.12);
         }
 
         .btn-hero-secondary {
@@ -63,8 +63,8 @@
         }
 
         .btn-hero-secondary:hover {
-            background: white;
-            color: #2563eb;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.12);
         }
 
         /* Stats Section */

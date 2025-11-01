@@ -4,237 +4,211 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class PropostaController extends Controller
 {
-
+    /**
+     * Lista pública de propostas
+     */
     public function index(Request $request)
     {
         $query = DB::table('propostas')
-            ->select('propostas.*')
+            ->select(
+                'propostas.*',
+                'users.name as usuario_nome',
+                'categorias_propostas.nome as categoria_nome',
+                'categorias_propostas.icone as categoria_icone',
+                DB::raw('(SELECT COUNT(*) FROM proposta_votos WHERE proposta_id = propostas.id AND tipo_voto = "a_favor") as votos_a_favor'),
+                DB::raw('(SELECT COUNT(*) FROM proposta_votos WHERE proposta_id = propostas.id AND tipo_voto = "contra") as votos_contra'),
+                DB::raw('(SELECT COUNT(*) FROM proposta_votos WHERE proposta_id = propostas.id AND tipo_voto = "neutro") as votos_neutro'),
+                DB::raw('(SELECT COUNT(*) FROM comentarios_propostas WHERE proposta_id = propostas.id) as total_comentarios')
+            )
+            ->join('users', 'propostas.user_id', '=', 'users.id')
+            ->join('categorias_propostas', 'propostas.categoria_id', '=', 'categorias_propostas.id')
             ->orderBy('propostas.created_at', 'desc');
 
-        if ($request->filled('status')) {
-            $query->where('propostas.status', $request->status);
-        }
+        $propostas = $query->paginate(10);
+        $categorias = DB::table('categorias_propostas')->orderBy('nome')->get();
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('propostas.titulo', 'LIKE', "%{$search}%")
-                    ->orWhere('propostas.descricao', 'LIKE', "%{$search}%")
-                    ->orWhere('propostas.localizacao', 'LIKE', "%{$search}%");
-            });
-        }
-
-
-        $propostas = $query->paginate(9);
-
-        $votosUsuario = [];
-        if (session('user_id')) {
-            $votosUsuario = DB::table('votos')
-                ->where('user_id', session('user_id'))
-                ->pluck('voto', 'proposta_id')
-                ->toArray();
-        }
-
-        foreach ($propostas as $proposta) {
-            $proposta->usuario_votou = isset($votosUsuario[$proposta->id]) ? $votosUsuario[$proposta->id] : null;
-            $proposta->total_votos = $proposta->total_votos_favoravel +
-                $proposta->total_votos_contrario +
-                $proposta->total_votos_neutro;
-
-            if ($proposta->total_votos > 0) {
-                $proposta->percentual_favoravel = round(($proposta->total_votos_favoravel / $proposta->total_votos) * 100);
-                $proposta->percentual_contrario = round(($proposta->total_votos_contrario / $proposta->total_votos) * 100);
-                $proposta->percentual_neutro = round(($proposta->total_votos_neutro / $proposta->total_votos) * 100);
-            } else {
-                $proposta->percentual_favoravel = 0;
-                $proposta->percentual_contrario = 0;
-                $proposta->percentual_neutro = 0;
-            }
-        }
-
-        $stats = [
-            'total' => DB::table('propostas')->count(),
-            'em_votacao' => DB::table('propostas')->where('status', 'em_votacao')->count(),
-            'aprovadas' => DB::table('propostas')->where('status', 'aprovada')->count(),
-            'implementadas' => DB::table('propostas')->where('status', 'implementada')->count(),
-        ];
-
-        return view('propostas.index', compact('propostas', 'stats'));
+        return view('propostas.index', compact('propostas', 'categorias'));
     }
 
-    public function show($id)
+    public function create()
     {
-        $proposta = DB::table('propostas')
-            ->where('id', $id)
-            ->first();
-
-        if (!$proposta) {
-            return redirect()->route('propostas.index')
-                ->with('error', 'Proposta não encontrada');
-        }
-
-        $votoUsuario = null;
-        if (session('user_id')) {
-            $voto = DB::table('votos')
-                ->where('user_id', session('user_id'))
-                ->where('proposta_id', $id)
-                ->first();
-
-            $votoUsuario = $voto ? $voto->voto : null;
-        }
-
-        $proposta->total_votos = $proposta->total_votos_favoravel +
-            $proposta->total_votos_contrario +
-            $proposta->total_votos_neutro;
-
-        if ($proposta->total_votos > 0) {
-            $proposta->percentual_favoravel = round(($proposta->total_votos_favoravel / $proposta->total_votos) * 100);
-            $proposta->percentual_contrario = round(($proposta->total_votos_contrario / $proposta->total_votos) * 100);
-            $proposta->percentual_neutro = round(($proposta->total_votos_neutro / $proposta->total_votos) * 100);
-        } else {
-            $proposta->percentual_favoravel = 0;
-            $proposta->percentual_contrario = 0;
-            $proposta->percentual_neutro = 0;
-        }
-
-        $ultimosVotantes = DB::table('votos')
-            ->select('users.name', 'votos.voto', 'votos.created_at')
-            ->join('users', 'votos.user_id', '=', 'users.id')
-            ->where('votos.proposta_id', $id)
-            ->orderBy('votos.created_at', 'desc')
-            ->limit(10)
-            ->get();
-
-        return view('propostas.show', compact('proposta', 'votoUsuario', 'ultimosVotantes'));
+        $categorias = DB::table('categorias_propostas')->orderBy('nome')->get();
+        return view('propostas.create', compact('categorias'));
     }
 
-    public function votar(Request $request, $id)
-    {
-        if (!session('user_id')) {
-            return redirect()->route('login')
-                ->with('error', 'Você precisa estar logado para votar');
-        }
-
-        $validator = Validator::make($request->all(), [
-            'voto' => 'required|in:favoravel,contrario,neutro'
-        ], [
-            'voto.required' => 'Selecione uma opção de voto',
-            'voto.in' => 'Opção de voto inválida'
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator);
-        }
-
-        $proposta = DB::table('propostas')->find($id);
-
-        if (!$proposta) {
-            return back()->with('error', 'Proposta não encontrada');
-        }
-
-        if ($proposta->status !== 'em_votacao') {
-            return back()->with('error', 'Esta proposta não está mais em votação');
-        }
-
-        if ($proposta->data_fim_votacao && $proposta->data_fim_votacao < date('Y-m-d')) {
-            return back()->with('error', 'O período de votação desta proposta já encerrou');
-        }
-
-        try {
-            DB::beginTransaction();
-
-            $votoExistente = DB::table('votos')
-                ->where('user_id', session('user_id'))
-                ->where('proposta_id', $id)
-                ->first();
-
-            if ($votoExistente) {
-                DB::table('votos')
-                    ->where('user_id', session('user_id'))
-                    ->where('proposta_id', $id)
-                    ->update([
-                        'voto' => $request->voto,
-                        'updated_at' => now()
-                    ]);
-
-                $mensagem = 'Seu voto foi atualizado com sucesso!';
-            } else {
-                DB::table('votos')->insert([
-                    'user_id' => session('user_id'),
-                    'proposta_id' => $id,
-                    'voto' => $request->voto,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-
-                $mensagem = 'Voto registrado com sucesso!';
-            }
-
-            DB::commit();
-
-            return back()->with('success', $mensagem);
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            return back()->with('error', 'Erro ao registrar voto. Tente novamente.');
-        }
-    }
-
-    public function removerVoto($id)
+    /**
+     * Salva a nova proposta
+     */
+    public function store(Request $request)
     {
         if (!session('user_id')) {
             return redirect()->route('login');
         }
 
-        try {
-            DB::table('votos')
-                ->where('user_id', session('user_id'))
-                ->where('proposta_id', $id)
-                ->delete();
+        $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descricao' => 'required|string',
+            'categoria_id' => 'required|exists:categorias_propostas,id',
+            'localizacao' => 'nullable|string|max:255', // Campo da sua tabela
+        ]);
 
-            return back()->with('success', 'Voto removido com sucesso!');
+        $propostaId = DB::table('propostas')->insertGetId([
+            'user_id' => session('user_id'),
+            'categoria_id' => $request->categoria_id,
+            'titulo' => $request->titulo,
+            'descricao' => $request->descricao,
+            'localizacao' => $request->localizacao,
+            'status' => 'em_votacao', // O status padrão da sua tabela
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
 
-        } catch (\Exception $e) {
-            return back()->with('error', 'Erro ao remover voto');
-        }
+        return redirect()->route('propostas.show', $propostaId)
+            ->with('success', 'Proposta enviada com sucesso!');
     }
 
-    public function minhasVotacoes()
+
+    /**
+     * Exibe detalhes da proposta
+     */
+    public function show($id)
+    {
+        $proposta = DB::table('propostas')
+            ->select(
+                'propostas.*',
+                'users.name as usuario_nome',
+                'categorias_propostas.nome as categoria_nome',
+                'categorias_propostas.icone as categoria_icone',
+                DB::raw('(SELECT COUNT(*) FROM proposta_votos WHERE proposta_id = propostas.id AND tipo_voto = "a_favor") as votos_a_favor'),
+                DB::raw('(SELECT COUNT(*) FROM proposta_votos WHERE proposta_id = propostas.id AND tipo_voto = "contra") as votos_contra'),
+                DB::raw('(SELECT COUNT(*) FROM proposta_votos WHERE proposta_id = propostas.id AND tipo_voto = "neutro") as votos_neutro')
+            )
+            ->join('users', 'propostas.user_id', '=', 'users.id')
+            ->join('categorias_propostas', 'propostas.categoria_id', '=', 'categorias_propostas.id')
+            ->where('propostas.id', $id)
+            ->first();
+
+        if (!$proposta) {
+            abort(404, 'Proposta não encontrada');
+        }
+
+        // Comentários
+        $comentarios = DB::table('comentarios_propostas')
+            ->select('comentarios_propostas.*', 'users.name as usuario_nome')
+            ->join('users', 'comentarios_propostas.user_id', '=', 'users.id')
+            ->where('comentarios_propostas.proposta_id', $id)
+            ->orderBy('comentarios_propostas.created_at', 'desc')
+            ->get();
+
+        // Verifica o voto do usuário logado
+        $meuVoto = null;
+        if (session('user_id')) {
+            $meuVoto = DB::table('proposta_votos')
+                ->where('proposta_id', $id)
+                ->where('user_id', session('user_id'))
+                ->first();
+        }
+
+        return view('propostas.show', compact('proposta', 'comentarios', 'meuVoto'));
+    }
+
+    /**
+     * Adiciona um comentário
+     */
+    public function addComment(Request $request, $id)
+    {
+        if (!session('user_id')) {
+            return redirect()->route('login');
+        }
+
+        $request->validate(['comentario' => 'required|string|max:1000']);
+
+        DB::table('comentarios_propostas')->insert([
+            'proposta_id' => $id,
+            'user_id' => session('user_id'),
+            'comentario' => $request->comentario,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        return redirect()->route('propostas.show', $id)
+            ->with('success', 'Comentário adicionado!');
+    }
+
+    /**
+     * Registra um voto
+     */
+    public function votar(Request $request, $id)
+    {
+        if (!session('user_id')) {
+            return redirect()->route('login');
+        }
+
+        $request->validate([
+            'tipo_voto' => 'required|in:a_favor,contra,neutro'
+        ]);
+
+        DB::table('proposta_votos')->updateOrInsert(
+            [
+                'proposta_id' => $id,
+                'user_id' => session('user_id')
+            ],
+            [
+                'tipo_voto' => $request->tipo_voto,
+                'created_at' => now()
+            ]
+        );
+
+        return redirect()->route('propostas.show', $id)
+            ->with('success', 'Voto registrado com sucesso!');
+    }
+
+    /**
+     * Remove o voto do usuário
+     */
+    public function removerVoto(Request $request, $id)
+    {
+        if (!session('user_id')) {
+            return redirect()->route('login');
+        }
+
+        DB::table('proposta_votos')
+            ->where('proposta_id', $id)
+            ->where('user_id', session('user_id'))
+            ->delete();
+
+        return redirect()->route('propostas.show', $id)
+            ->with('success', 'Seu voto foi removido.');
+    }
+
+    /**
+     * Exibe propostas que o usuário votou
+     */
+    public function minhasVotacoes(Request $request)
     {
         if (!session('user_id')) {
             return redirect()->route('login');
         }
 
         $propostas = DB::table('propostas')
-            ->select('propostas.*', 'votos.voto', 'votos.created_at as data_voto')
-            ->join('votos', 'propostas.id', '=', 'votos.proposta_id')
-            ->where('votos.user_id', session('user_id'))
-            ->orderBy('votos.created_at', 'desc')
-            ->paginate(9);
+            ->select(
+                'propostas.*',
+                'categorias_propostas.nome as categoria_nome',
+                'proposta_votos.tipo_voto',
+                DB::raw('(SELECT COUNT(*) FROM proposta_votos WHERE proposta_id = propostas.id AND tipo_voto = "a_favor") as votos_a_favor'),
+                DB::raw('(SELECT COUNT(*) FROM proposta_votos WHERE proposta_id = propostas.id AND tipo_voto = "contra") as votos_contra'),
+                DB::raw('(SELECT COUNT(*) FROM proposta_votos WHERE proposta_id = propostas.id AND tipo_voto = "neutro") as votos_neutro')
+            )
+            ->join('categorias_propostas', 'propostas.categoria_id', '=', 'categorias_propostas.id')
+            ->join('proposta_votos', 'propostas.id', '=', 'proposta_votos.proposta_id')
+            ->where('proposta_votos.user_id', session('user_id'))
+            ->orderBy('proposta_votos.created_at', 'desc')
+            ->paginate(10);
 
-        foreach ($propostas as $proposta) {
-            $proposta->total_votos = $proposta->total_votos_favoravel +
-                $proposta->total_votos_contrario +
-                $proposta->total_votos_neutro;
-
-            if ($proposta->total_votos > 0) {
-                $proposta->percentual_favoravel = round(($proposta->total_votos_favoravel / $proposta->total_votos) * 100);
-                $proposta->percentual_contrario = round(($proposta->total_votos_contrario / $proposta->total_votos) * 100);
-                $proposta->percentual_neutro = round(($proposta->total_votos_neutro / $proposta->total_votos) * 100);
-            }
-        }
-
-        $stats = [
-            'total_votos' => DB::table('votos')->where('user_id', session('user_id'))->count(),
-            'favoravel' => DB::table('votos')->where('user_id', session('user_id'))->where('voto', 'favoravel')->count(),
-            'contrario' => DB::table('votos')->where('user_id', session('user_id'))->where('voto', 'contrario')->count(),
-            'neutro' => DB::table('votos')->where('user_id', session('user_id'))->where('voto', 'neutro')->count(),
-        ];
-
-        return view('propostas.minhas-votacoes', compact('propostas', 'stats'));
+        return view('propostas.minhas-votacoes', compact('propostas'));
     }
 }

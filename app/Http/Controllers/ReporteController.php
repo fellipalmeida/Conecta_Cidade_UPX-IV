@@ -8,15 +8,16 @@ use Illuminate\Support\Str;
 
 class ReporteController extends Controller
 {
-    /**
-     * Exibe lista pública de reportes
-     */
+
     public function index(Request $request)
     {
         $query = DB::table('reportes')
             ->select(
                 'reportes.*',
+                'reportes.prioridade as urgencia', // <-- ADICIONE ESTA LINHA
                 'users.name as usuario_nome',
+                'reportes.foto as imagem',
+                'reportes.endereco as localizacao',
                 'categorias.nome as categoria_nome',
                 'categorias.icone as categoria_icone',
                 DB::raw('(SELECT COUNT(*) FROM comentarios_reportes WHERE reporte_id = reportes.id) as total_comentarios')
@@ -79,17 +80,17 @@ class ReporteController extends Controller
             return redirect()->route('login');
         }
 
-        // Validação
+
         $request->validate([
             'titulo' => 'required|string|max:200',
             'descricao' => 'required|string',
             'categoria_id' => 'required|exists:categorias,id',
-            'endereco' => 'required|string|max:255',
+            'localizacao' => 'required|string|max:255', // <-- MUDOU DE 'endereco'
             'referencia' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'prioridade' => 'required|in:baixa,media,alta,urgente',
-            'foto' => 'nullable|image|max:5120' // 5MB
+            'urgencia' => 'required|in:baixa,media,alta,urgente', // <-- MUDOU DE 'prioridade'
+            'imagem' => 'nullable|image|max:5120' // <-- MUDOU DE 'foto'
         ]);
 
         // Gerar protocolo único
@@ -97,8 +98,8 @@ class ReporteController extends Controller
 
         // Upload da imagem
         $fotoPath = null;
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto');
+        if ($request->hasFile('imagem')) { // <-- MUDOU DE 'foto'
+            $foto = $request->file('imagem'); // <-- MUDOU DE 'foto'
             $nomeFoto = time() . '_' . Str::slug($request->titulo) . '.' . $foto->getClientOriginalExtension();
             $foto->move(public_path('uploads/reportes'), $nomeFoto);
             $fotoPath = 'uploads/reportes/' . $nomeFoto;
@@ -110,11 +111,11 @@ class ReporteController extends Controller
             'categoria_id' => $request->categoria_id,
             'titulo' => $request->titulo,
             'descricao' => $request->descricao,
-            'endereco' => $request->endereco,
+            'endereco' => $request->localizacao, // <-- MUDOU DE $request->endereco
             'referencia' => $request->referencia,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
-            'prioridade' => $request->prioridade,
+            'prioridade' => $request->urgencia, // <-- MUDOU DE $request->prioridade
             'status' => 'pendente',
             'protocolo' => $protocolo,
             'foto' => $fotoPath,
@@ -137,7 +138,10 @@ class ReporteController extends Controller
         $reporte = DB::table('reportes')
             ->select(
                 'reportes.*',
+                'reportes.prioridade as urgencia',
+                'reportes.foto as imagem', // <-- ADICIONE ESTA LINHA
                 'users.name as usuario_nome',
+                'reportes.endereco as localizacao',
                 'users.email as usuario_email',
                 'categorias.nome as categoria_nome',
                 'categorias.icone as categoria_icone'
@@ -180,6 +184,7 @@ class ReporteController extends Controller
         $query = DB::table('reportes')
             ->select(
                 'reportes.*',
+                'reportes.endereco as localizacao',
                 'categorias.nome as categoria_nome',
                 'categorias.icone as categoria_icone',
                 DB::raw('(SELECT COUNT(*) FROM comentarios_reportes WHERE reporte_id = reportes.id) as total_comentarios')

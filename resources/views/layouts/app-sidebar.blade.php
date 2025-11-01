@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Conecta Cidade - Plataforma de participação cidadã em mobilidade urbana">
     <title>@yield('title', 'Conecta Cidade - Participação Cidadã')</title>
+    <link rel="icon" href="https://www.svgrepo.com/download/478646/infinity-symbol.svg" type="image/svg+xml">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 
     <!-- CSS -->
     <style>
@@ -400,7 +402,9 @@
         <!-- Logo -->
         <div class="sidebar-header">
             <a href="{{ route('dashboard') }}" class="sidebar-logo">
-                <div class="sidebar-logo-icon">CC</div>
+                <div class="" style="position: relative; top: 4px"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-infinity" viewBox="0 0 16 16">
+                        <path d="M5.68 5.792 7.345 7.75 5.681 9.708a2.75 2.75 0 1 1 0-3.916ZM8 6.978 6.416 5.113l-.014-.015a3.75 3.75 0 1 0 0 5.304l.014-.015L8 8.522l1.584 1.865.014.015a3.75 3.75 0 1 0 0-5.304l-.014.015zm.656.772 1.663-1.958a2.75 2.75 0 1 1 0 3.916z"/>
+                    </svg>️</div>
                 <span class="sidebar-logo-text">Conecta Cidade</span>
             </a>
         </div>
@@ -420,22 +424,16 @@
             </div>
         </div>
 
-        <!-- Menu -->
         <nav class="sidebar-menu">
-            <!-- Principal -->
             <div class="sidebar-menu-section">
                 <div class="sidebar-menu-title">Principal</div>
                 <a href="{{ route('dashboard') }}" class="sidebar-menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <span class="sidebar-menu-icon">🏠</span>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('home') }}" class="sidebar-menu-item">
-                    <span class="sidebar-menu-icon">🌆</span>
-                    <span>Página Inicial</span>
-                </a>
+
             </div>
 
-            <!-- Reportes -->
             <div class="sidebar-menu-section">
                 <div class="sidebar-menu-title">Reportes</div>
                 <a href="{{ route('reportes.create') }}" class="sidebar-menu-item {{ request()->routeIs('reportes.create') ? 'active' : '' }}">
@@ -446,10 +444,10 @@
                     <span class="sidebar-menu-icon">📋</span>
                     <span>Meus Reportes</span>
                 </a>
-                <a href="{{ route('reportes.index') }}" class="sidebar-menu-item {{ request()->routeIs('reportes.index') ? 'active' : '' }}">
-                    <span class="sidebar-menu-icon">📍</span>
-                    <span>Todos os Reportes</span>
-                </a>
+{{--                <a href="{{ route('reportes.index') }}" class="sidebar-menu-item {{ request()->routeIs('reportes.index') ? 'active' : '' }}">--}}
+{{--                    <span class="sidebar-menu-icon">📍</span>--}}
+{{--                    <span>Todos os Reportes</span>--}}
+{{--                </a>--}}
             </div>
 
             <!-- Propostas -->
@@ -487,7 +485,7 @@
             <!-- Conta -->
             <div class="sidebar-menu-section">
                 <div class="sidebar-menu-title">Conta</div>
-                <a href="#" class="sidebar-menu-item">
+                <a href="{{ route('profile.show') }}" class="sidebar-menu-item {{ request()->routeIs('profile.show') ? 'active' : '' }}">
                     <span class="sidebar-menu-icon">👤</span>
                     <span>Meu Perfil</span>
                 </a>

@@ -40,6 +40,7 @@
             text-align: center;
             border-top: 3px solid #e5e7eb;
             transition: transform 0.2s;
+            text-decoration: none;
         }
 
         .stat-card:hover {

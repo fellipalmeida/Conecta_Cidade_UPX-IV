@@ -27,7 +27,7 @@
 
         /* Busca por Protocolo */
         .protocolo-search {
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            background-color: #1D4ED8;
             padding: 2rem;
             border-radius: 16px;
             margin-bottom: 3rem;
