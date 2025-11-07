@@ -41,19 +41,17 @@
             background-color: rgba(244, 244, 244, 0.91);
         }
 
-        /* Layout Principal com Sidebar */
         .layout-container {
             display: flex;
             min-height: 100vh;
         }
 
-        /* Sidebar */
         .sidebar {
             width: var(--sidebar-width);
             background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
             color: white;
             position: fixed;
-            height: 100vh;
+            height: 100%;
             overflow-y: auto;
             z-index: 1000;
             transition: transform 0.3s ease;
@@ -89,7 +87,6 @@
             font-weight: 700;
         }
 
-        /* User Profile no Sidebar */
         .sidebar-user {
             padding: 1.5rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -128,7 +125,6 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
-        /* Menu do Sidebar */
         .sidebar-menu {
             padding: 1rem 0;
         }
@@ -193,7 +189,6 @@
             font-weight: 600;
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
@@ -202,7 +197,6 @@
             min-height: 100vh;
         }
 
-        /* Top Header */
         .top-header {
             background: white;
             border-bottom: 1px solid #e5e7eb;
@@ -454,12 +448,17 @@
             <!-- Propostas -->
             <div class="sidebar-menu-section">
                 <div class="sidebar-menu-title">Propostas</div>
+
+                <a href="{{ route('propostas.create') }}" class="sidebar-menu-item {{ request()->routeIs('propostas.create') ? 'active' : '' }}">
+                    <span class="sidebar-menu-icon">➕</span>
+                    <span>Criar Proposta</span>
+                </a>
                 <a href="{{ route('propostas.index') }}" class="sidebar-menu-item {{ request()->routeIs('propostas.index') ? 'active' : '' }}">
                     <span class="sidebar-menu-icon">🗳️</span>
                     <span>Ver Propostas</span>
                 </a>
                 <a href="{{ route('propostas.minhas-votacoes') }}" class="sidebar-menu-item {{ request()->routeIs('propostas.minhas-votacoes') ? 'active' : '' }}">
-                    <span class="sidebar-menu-icon">✓</span>
+                    <span class="sidebar-menu-icon">📝</span>
                     <span>Minhas Votações</span>
                 </a>
             </div>

@@ -21,7 +21,7 @@
         .header-actions {
             margin-bottom: 2rem;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
         }
         .propostas-grid {
@@ -108,16 +108,13 @@
 @section('content')
     <div class="propostas-container">
         <div class="page-header">
-            <h1 class="page-title">Propostas da Cidade</h1>
-            <p style="color: #6b7280;">Veja e vote em propostas de melhoria urbana.</p>
+            <h1 class="page-title" style="margin-bottom: 8px">🗳️ Propostas da Cidade</h1>
+            <p style="color: #6b7280; font-size: 1.1rem">Veja e vote em propostas de melhoria urbana.</p>
         </div>
 
         <div class="header-actions">
 
-            <a href="{{ route('propostas.create') }}" class="btn btn-primary">
-                <span>➕</span>
-                <span>Criar Proposta</span>
-            </a>
+
         </div>
 
         @if($propostas->count() > 0)

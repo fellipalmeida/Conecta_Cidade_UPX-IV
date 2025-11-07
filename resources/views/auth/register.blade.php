@@ -243,7 +243,6 @@
                         name="name"
                         class="form-input @error('name') error @enderror"
                         value="{{ old('name') }}"
-                        placeholder="João da Silva"
                         required
                     >
                     @error('name')
@@ -288,7 +287,7 @@
                         @error('cpf')
                         <span class="form-error">{{ $message }}</span>
                         @enderror
-                        <span class="form-help">Apenas números</span>
+
                     </div>
                 </div>
 
@@ -296,7 +295,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="telefone" class="form-label">
-                            Telefone <span class="optional">(opcional)</span>
+                            Telefone <span class="required">*</span>
                         </label>
                         <input
                             type="text"
@@ -305,6 +304,7 @@
                             class="form-input @error('telefone') error @enderror"
                             value="{{ old('telefone') }}"
                             placeholder="(15) 99999-9999"
+                            required
                         >
                         @error('telefone')
                         <span class="form-error">{{ $message }}</span>
@@ -313,15 +313,14 @@
 
                     <div class="form-group">
                         <label for="cidade" class="form-label">
-                            Cidade <span class="optional">(opcional)</span>
+                            Cidade <span class="required">*</span>
                         </label>
                         <input
                             type="text"
                             id="cidade"
                             name="cidade"
                             class="form-input @error('cidade') error @enderror"
-                            value="{{ old('cidade', 'Sorocaba') }}"
-                            placeholder="Sorocaba"
+                            required
                         >
                         @error('cidade')
                         <span class="form-error">{{ $message }}</span>

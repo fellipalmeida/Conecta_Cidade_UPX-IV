@@ -4,29 +4,90 @@
 
 @section('styles')
     <style>
-        .create-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
-        .page-header { margin-bottom: 2rem; }
-        .page-title { font-size: 2rem; font-weight: 700; color: #1f2937; }
-        .form-card { background: white; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); padding: 2rem; }
-        .form-group { margin-bottom: 1.5rem; }
-        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151; }
-        .required { color: #ef4444; }
-        .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; }
-        .form-control:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        .form-control.error { border-color: #ef4444; }
-        .error-message { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
-        textarea.form-control { min-height: 150px; resize: vertical; }
-        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e5e7eb; }
-        .btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 500; cursor: pointer; border: none; font-size: 1rem; }
-        .btn-primary { background: #2563eb; color: white; }
-        .btn-secondary { background: #6b7280; color: white; }
+        .create-container {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
+        }
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        .required {
+            color: #ef4444;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .form-control.error {
+            border-color: #ef4444;
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
     </style>
 @endsection
 
 @section('content')
     <div class="create-container">
         <div class="page-header">
-            <h1 class="page-title">💡 Criar Nova Proposta</h1>
+            <h1 class="page-title" style="margin-bottom: 8px">💡 Criar Nova Proposta</h1>
+            <p style="color: #6b7280;font-size: 1.1rem;">Relate uma proposta urbana para ajudar a melhorar nossa cidade.</p>
         </div>
 
         <form action="{{ route('propostas.store') }}" method="POST">

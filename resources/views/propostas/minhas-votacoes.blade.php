@@ -84,7 +84,7 @@
 @section('content')
     <div class="votacoes-container">
         <div class="page-header">
-            <h1 class="page-title">🗳️ Minhas Votações</h1>
+            <h1 class="page-title">📝 Minhas Votações</h1>
         </div>
 
         @if($propostas->count() > 0)

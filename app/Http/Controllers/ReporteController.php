@@ -14,7 +14,7 @@ class ReporteController extends Controller
         $query = DB::table('reportes')
             ->select(
                 'reportes.*',
-                'reportes.prioridade as urgencia', // <-- ADICIONE ESTA LINHA
+                'reportes.prioridade as urgencia',
                 'users.name as usuario_nome',
                 'reportes.foto as imagem',
                 'reportes.endereco as localizacao',
@@ -25,7 +25,6 @@ class ReporteController extends Controller
             ->join('users', 'reportes.user_id', '=', 'users.id')
             ->join('categorias', 'reportes.categoria_id', '=', 'categorias.id');
 
-        // Filtros
         if ($request->has('categoria')) {
             $query->where('reportes.categoria_id', $request->categoria);
         }
@@ -46,7 +45,6 @@ class ReporteController extends Controller
         $reportes = $query->orderBy('reportes.created_at', 'desc')
             ->paginate(12);
 
-        // Buscar categorias para filtro
         $categorias = DB::table('categorias')
             ->orderBy('nome')
             ->get();
@@ -263,9 +261,7 @@ class ReporteController extends Controller
             ->with('success', 'Comentário adicionado com sucesso!');
     }
 
-    /**
-     * Busca reporte por protocolo
-     */
+
     public function buscarPorProtocolo(Request $request)
     {
         $request->validate([

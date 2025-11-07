@@ -118,7 +118,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 1rem;
+            padding: 5px;
             border: 2px solid #e5e7eb;
             border-radius: 12px;
             cursor: pointer;
@@ -419,20 +419,62 @@
                     </h2>
 
                     <div class="categoria-grid">
-                        @foreach($categorias as $categoria)
-                            <div class="categoria-item">
-                                <input type="radio"
-                                       id="categoria_{{ $categoria->id }}"
-                                       name="categoria_id"
-                                       value="{{ $categoria->id }}"
-                                       {{ old('categoria_id') == $categoria->id ? 'checked' : '' }}
-                                       required>
-                                <label for="categoria_{{ $categoria->id }}" class="categoria-label">
-                                    <span class="categoria-icon">{{ $categoria->icone }}</span>
-                                    <span class="categoria-name">{{ $categoria->nome }}</span>
-                                </label>
-                            </div>
-                        @endforeach
+                        <div class="categoria-item">
+                            <input type="radio" id="categoria_1" name="categoria_id" value="1" {{ old('categoria_id') == '1' ? 'checked' : '' }} required>
+                            <label for="categoria_1" class="categoria-label">
+                                <span class="categoria-icon">🛣️</span>
+                                <span class="categoria-name">Buracos na Rua</span>
+                            </label>
+                        </div>
+
+                        <div class="categoria-item">
+                            <input type="radio" id="categoria_2" name="categoria_id" value="2" {{ old('categoria_id') == '2' ? 'checked' : '' }} required>
+                            <label for="categoria_2" class="categoria-label">
+                                <span class="categoria-icon">🚦</span>
+                                <span class="categoria-name">Semáforos</span>
+                            </label>
+                        </div>
+
+                        <div class="categoria-item">
+                            <input type="radio" id="categoria_3" name="categoria_id" value="3" {{ old('categoria_id') == '3' ? 'checked' : '' }} required>
+                            <label for="categoria_3" class="categoria-label">
+                                <span class="categoria-icon">🚸</span>
+                                <span class="categoria-name">Falta de Sinalização</span>
+                            </label>
+                        </div>
+
+                        <div class="categoria-item">
+                            <input type="radio" id="categoria_4" name="categoria_id" value="4" {{ old('categoria_id') == '4' ? 'checked' : '' }} required>
+                            <label for="categoria_4" class="categoria-label">
+                                <span class="categoria-icon">🚌</span>
+                                <span class="categoria-name">Transporte Público</span>
+                            </label>
+                        </div>
+
+                        <div class="categoria-item">
+                            <input type="radio" id="categoria_5" name="categoria_id" value="5" {{ old('categoria_id') == '5' ? 'checked' : '' }} required>
+                            <label for="categoria_5" class="categoria-label">
+                                <span class="categoria-icon">💡</span>
+                                <span class="categoria-name">Iluminação Pública</span>
+                            </label>
+                        </div>
+
+                        <div class="categoria-item">
+                            <input type="radio" id="categoria_6" name="categoria_id" value="6" {{ old('categoria_id') == '6' ? 'checked' : '' }} required>
+                            <label for="categoria_6" class="categoria-label">
+                                <span class="categoria-icon">🗑️</span>
+                                <span class="categoria-name">Limpeza Urbana</span>
+                            </label>
+                        </div>
+
+
+                        <div class="categoria-item">
+                            <input type="radio" id="categoria_8" name="categoria_id" value="8" {{ old('categoria_id') == '8' ? 'checked' : '' }} required>
+                            <label for="categoria_8" class="categoria-label">
+                                <span class="categoria-icon">⚠️</span>
+                                <span class="categoria-name">Outros</span>
+                            </label>
+                        </div>
                     </div>
                     @error('categoria_id')
                     <div class="error-message">{{ $message }}</div>
@@ -519,15 +561,16 @@
                         <div class="error-message">{{ $message }}</div>
                         @enderror
                     </div>
+                    <div class="form-hint">
+                        Clique no mapa para marcar a localização exata do problema
+                    </div>
 
                     <div id="map"></div>
 
                     <input type="hidden" name="latitude" id="latitude" value="{{ old('latitude') }}">
                     <input type="hidden" name="longitude" id="longitude" value="{{ old('longitude') }}">
 
-                    <div class="form-hint">
-                        Clique no mapa para marcar a localização exata do problema
-                    </div>
+
                 </div>
 
                 <div class="form-section">
