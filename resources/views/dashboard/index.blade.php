@@ -3,9 +3,11 @@
 @section('styles')
     <style>
         .dashboard-container {
-            max-width: 1400px;
+            max-width: 1250px;
             margin: 0 auto;
             padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
         }
 
         .welcome-section {
@@ -268,7 +270,7 @@
             width: 50px;
             height: 50px;
             background: linear-gradient(135deg, #2563eb, #1e40af);
-            border-radius: 10px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -306,10 +308,10 @@
 @endsection
 
 @section('content')
-    <div class="dashboard-container">
-        <div class="welcome-section">
-            <h1>👋 Olá, {{ session('user_name') }}!</h1>
-            <p>Bem-vindo de volta ao Conecta Cidade. Veja o resumo das suas atividades e continue ajudando a melhorar nossa cidade.</p>
+    <div class="dashboard-container" >
+
+        <div class="page-header" style="margin-bottom: 40px;">
+            <h1 class="page-title" style="font-size: 35px">🏠 Dashboard</h1>
         </div>
 
         <div class="stats-grid">

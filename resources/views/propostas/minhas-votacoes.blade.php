@@ -4,20 +4,80 @@
 
 @section('styles')
     <style>
-        .votacoes-container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
-        .page-header { margin-bottom: 2rem; }
-        .page-title { font-size: 2rem; font-weight: 700; color: #1f2937; }
-        .propostas-list { display: flex; flex-direction: column; gap: 1rem; }
-        .proposta-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
-        .proposta-card:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transform: translateY(-3px); }
-        .proposta-info { flex: 1; }
-        .proposta-title { font-size: 1.15rem; font-weight: 600; color: #1f2937; text-decoration: none; margin-bottom: 0.5rem; }
-        .proposta-title:hover { color: #2563eb; }
-        .proposta-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; color: #6b7280; font-size: 0.875rem; }
-        .meu-voto { font-size: 1rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 8px; white-space: nowrap; }
-        .meu-voto.favor { background: #f0fdf4; color: #10b981; }
-        .meu-voto.contra { background: #fef2f2; color: #ef4444; }
-        .meu-voto.neutro { background: #f3f4f6; color: #6b7280; }
+        .votacoes-container {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
+        }
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .propostas-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .proposta-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            border-left: 6px solid gray;
+        }
+        .proposta-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+        .proposta-info {
+            flex: 1;
+        }
+        .proposta-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+        }
+        .proposta-title:hover {
+            color: #2563eb;
+        }
+        .proposta-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .meu-voto {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+        .meu-voto.favor {
+            background: #f0fdf4;
+            color: #10b981;
+        }
+        .meu-voto.contra {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+        .meu-voto.neutro {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
     </style>
 @endsection
 

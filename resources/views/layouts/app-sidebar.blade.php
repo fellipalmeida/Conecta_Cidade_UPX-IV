@@ -38,7 +38,7 @@
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
             color: var(--dark);
-            background-color: #f9fafb;
+            background-color: rgba(244, 244, 244, 0.91);
         }
 
         /* Layout Principal com Sidebar */
@@ -206,7 +206,7 @@
         .top-header {
             background: white;
             border-bottom: 1px solid #e5e7eb;
-            padding: 1rem 2rem;
+            padding: 11px 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -273,6 +273,7 @@
         .content-area {
             flex: 1;
             padding: 2rem;
+            background-color: ;
         }
 
         /* Alerts */
@@ -506,10 +507,10 @@
     <!-- Main Content -->
     <div class="main-content">
         <!-- Top Header -->
-        <header class="top-header">
+        <header class="top-header" style=" padding: 19px 2rem;!important;">
             <div class="top-header-left">
                 <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-                <h1 class="page-title">@yield('page-title', 'Dashboard')</h1>
+
             </div>
             <div class="top-header-right">
                 <button class="header-icon-btn" title="Notificações">

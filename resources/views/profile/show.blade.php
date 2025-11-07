@@ -3,9 +3,11 @@
 @section('styles')
     <style>
         .profile-container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
         }
 
         .page-header {
@@ -24,12 +26,7 @@
             font-size: 1.1rem;
         }
 
-        .form-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-            padding: 2rem;
-        }
+
 
         .form-section {
             margin-bottom: 2rem;
@@ -142,11 +139,6 @@
             <p class="page-subtitle">Atualize suas informações pessoais e senha</p>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <form action="{{ route('profile.update') }}" method="POST">
             @csrf

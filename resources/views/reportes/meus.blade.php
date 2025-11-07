@@ -3,9 +3,11 @@
 @section('styles')
     <style>
         .meus-reportes-container {
-            max-width: 1200px;
+            max-width: 1250px;
             margin: 0 auto;
             padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
         }
 
         .page-header {
@@ -129,7 +131,7 @@
         }
 
         .btn-novo-reporte {
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1rem;
             background: #2563eb;
             color: white;
             border-radius: 8px;
@@ -427,37 +429,7 @@
             <p class="page-subtitle">Acompanhe o status de todos os seus reportes</p>
         </div>
 
-        <div class="stats-container">
-            <a href="{{ route('reportes.meus') }}" class="stat-card {{ !request('status') ? 'active' : '' }}">
-                <div class="stat-value">{{ $stats['total'] }}</div>
-                <div class="stat-label">Total</div>
-            </a>
 
-            <a href="{{ route('reportes.meus', ['status' => 'pendente']) }}" class="stat-card pendente {{ request('status') == 'pendente' ? 'active' : '' }}">
-                <div class="stat-value">{{ $stats['pendentes'] }}</div>
-                <div class="stat-label">Pendentes</div>
-            </a>
-
-            <a href="{{ route('reportes.meus', ['status' => 'em_analise']) }}" class="stat-card em_analise {{ request('status') == 'em_analise' ? 'active' : '' }}">
-                <div class="stat-value">{{ $stats['em_analise'] }}</div>
-                <div class="stat-label">Em Análise</div>
-            </a>
-
-            <a href="{{ route('reportes.meus', ['status' => 'em_andamento']) }}" class="stat-card em_andamento {{ request('status') == 'em_andamento' ? 'active' : '' }}">
-                <div class="stat-value">{{ $stats['em_andamento'] }}</div>
-                <div class="stat-label">Em Andamento</div>
-            </a>
-
-            <a href="{{ route('reportes.meus', ['status' => 'resolvido']) }}" class="stat-card resolvido {{ request('status') == 'resolvido' ? 'active' : '' }}">
-                <div class="stat-value">{{ $stats['resolvidos'] }}</div>
-                <div class="stat-label">Resolvidos</div>
-            </a>
-
-            <a href="{{ route('reportes.meus', ['status' => 'rejeitado']) }}" class="stat-card rejeitado {{ request('status') == 'rejeitado' ? 'active' : '' }}">
-                <div class="stat-value">{{ $stats['rejeitados'] }}</div>
-                <div class="stat-label">Rejeitados</div>
-            </a>
-        </div>
 
          <div class="controls-section">
             <div class="filter-tabs">
@@ -482,8 +454,13 @@
             </div>
 
             <a href="{{ route('reportes.create') }}" class="btn-novo-reporte">
-                <span>➕</span>
-                <span>Novo Reporte</span>
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16" style="position: relative;top: 3px">
+                      <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                    </svg>
+                </span>
+                <span>Criar Reporte</span>
             </a>
         </div>
 
@@ -523,14 +500,16 @@
                         <p class="reporte-descricao">{{ $reporte->descricao }}</p>
 
                         <div class="reporte-footer">
-                            <span class="protocolo-badge">{{ $reporte->protocolo }}</span>
+                            <span class="protocolo-badge">
+                                <button class="action-btn" onclick="copiarProtocolo('{{ $reporte->protocolo }}')">
+                                    Copiar
+                                </button>
+                                {{ $reporte->protocolo }}</span>
                             <div class="reporte-actions">
                                 <a href="{{ route('reportes.show', $reporte->id) }}" class="action-btn primary">
                                     Ver Detalhes
                                 </a>
-                                <button class="action-btn" onclick="copiarProtocolo('{{ $reporte->protocolo }}')">
-                                    📋 Copiar
-                                </button>
+
                             </div>
                         </div>
                     </div>

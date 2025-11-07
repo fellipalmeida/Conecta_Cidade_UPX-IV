@@ -11,7 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <style>
         * {
             margin: 0;
@@ -110,6 +112,10 @@
         .btn-primary {
             background: var(--primary-color);
             color: var(--white);
+        }
+
+        .botaohome:hover {
+            color: #1D4ED8!important;
         }
 
         .btn-primary:hover {
@@ -348,9 +354,9 @@
                 </li>
             @else
                 <!-- Links para usuários NÃO logados -->
-                <li><a href="{{ route('home') }}">Início</a></li>
-                <li><a href="#sobre">Sobre</a></li>
-                <li><a href="#como-funciona">Como Funciona</a></li>
+                <li ><a href="{{ route('home') }}" class="botaohome">Início</a></li>
+                <li class="botaohome"><a href="#sobre" class="botaohome">Sobre</a></li>
+                <li ><a href="#como-funciona" class="botaohome">Como Funciona</a></li>
                 <li><a href="{{ route('login') }}" class="btn btn-outline ">Entrar</a></li>
                 <li><a href="{{ route('register') }}" class="btn btn-primary" style="color: white;">Cadastrar</a></li>
             @endif
@@ -397,8 +403,8 @@
 
         <div class="footer-section">
             <h3>Contato</h3>
-            <p>Email: contato@conectacidade.com</p>
-            <p>Telefone: (15) 3000-0000</p>
+            <p>Email: fellipalmeida1@gmail.com</p>
+            <p>Telefone: (15) 99156-6780</p>
             <p>Sorocaba - SP</p>
         </div>
 

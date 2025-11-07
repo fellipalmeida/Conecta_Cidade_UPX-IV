@@ -4,9 +4,11 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         .create-container {
-            max-width: 900px;
+            max-width: 1250px;
             margin: 0 auto;
             padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
         }
 
         .page-header {
@@ -28,8 +30,7 @@
         .form-card {
             background: white;
             border-radius: 16px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-            padding: 2rem;
+            padding: 10px;
         }
 
         .form-section {
