@@ -386,6 +386,253 @@
         .sidebar::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.5);
         }
+        /* --- Estilos dos Modais (Novo) --- */
+        .custom-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000; /* Maior que o sidebar */
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .custom-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .custom-modal {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .custom-modal-overlay.active .custom-modal {
+            transform: translateY(0);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Estilos Específicos para Notificações */
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            background: var(--light-gray);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .notification-item.important {
+            border-left-color: var(--danger-color);
+            background: #fef2f2;
+        }
+
+        .notification-date {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .notification-body {
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+        /* Estilos básicos de formulário para o modal de suporte */
+        .modal-form-group {
+            margin-bottom: 1rem;
+        }
+
+        .modal-form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .modal-form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .modal-form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        /* --- Dropdown de Notificações --- */
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 60px; /* Ajuste conforme a altura do seu header */
+            right: 80px; /* Ajuste para alinhar com o sino */
+            width: 380px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 1001;
+            border: 1px solid var(--light-gray);
+            overflow: hidden;
+        }
+
+        .notification-dropdown.active {
+            display: block;
+            animation: slideDown 0.2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-title {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+
+        .mark-all-read {
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .mark-all-read:hover {
+            text-decoration: underline;
+        }
+
+        .dropdown-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .dropdown-notification-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .dropdown-notification-item:hover {
+            background: #f9fafb;
+        }
+
+        .dropdown-notification-item.unread {
+            background: #f0f9ff; /* Azul bem claro para não lidas */
+        }
+
+        .dropdown-notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .noti-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.4rem;
+        }
+
+        .noti-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--dark);
+        }
+
+        .noti-date {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .noti-body {
+            font-size: 0.85rem;
+            color: #4b5563;
+            line-height: 1.4;
+        }
+
+        .dropdown-footer {
+            padding: 0.75rem;
+            text-align: center;
+            border-top: 1px solid var(--light-gray);
+            background: #f9fafb;
+        }
+
+        .view-all-btn {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Ajuste para mobile */
+        @media (max-width: 768px) {
+            .notification-dropdown {
+                width: 90%;
+                right: 5%;
+                left: 5%;
+                top: 70px;
+            }
+        }
     </style>
 
     @yield('styles')
@@ -511,14 +758,52 @@
                 <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
 
             </div>
-            <div class="top-header-right">
-                <button class="header-icon-btn" title="Notificações">
+            <div class="top-header-right" style="position: relative;">
+                <button id="notiBtn" class="header-icon-btn" title="Novidades" onclick="toggleDropdown('notificationDropdown')">
                     🔔
-                    <span class="header-icon-badge"></span>
-                </button>
-                <button class="header-icon-btn" title="Mensagens">
+                    <span class="header-icon-badge"></span> </button>
+
+                <button class="header-icon-btn" title="Fale com o Suporte" onclick="openModal('supportModal')">
                     💬
                 </button>
+            </div>
+            <div id="notificationDropdown" class="notification-dropdown">
+                <div class="dropdown-header">
+                    <span class="dropdown-title">🔔 Notificações</span>
+                    <span class="mark-all-read">Marcar todas como lidas</span>
+                </div>
+                <div class="dropdown-body">
+                    <div class="dropdown-notification-item unread">
+                        <div class="noti-header">
+                            <span class="noti-title">Manutenção Programada</span>
+                            <span class="noti-date">Hoje, 14:30</span>
+                        </div>
+                        <div class="noti-body">
+                            O sistema passará por uma atualização neste sábado das 02h às 04h.
+                        </div>
+                    </div>
+                    <div class="dropdown-notification-item">
+                        <div class="noti-header">
+                            <span class="noti-title">Nova Funcionalidade: Mapas</span>
+                            <span class="noti-date">Ontem, 09:15</span>
+                        </div>
+                        <div class="noti-body">
+                            Visualize problemas relatados diretamente no mapa da dashboard.
+                        </div>
+                    </div>
+                    <div class="dropdown-notification-item">
+                        <div class="noti-header">
+                            <span class="noti-title">Bem-vindo!</span>
+                            <span class="noti-date">01 Nov</span>
+                        </div>
+                        <div class="noti-body">
+                            Explore as funcionalidades e ajude a melhorar nossa cidade.
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown-footer">
+                    <a href="#" class="view-all-btn">Ver todas as notificações</a>
+                </div>
             </div>
         </header>
 
@@ -549,6 +834,115 @@
     </div>
 </div>
 
+
+<div class="custom-modal-overlay" id="supportModal">
+    <div class="custom-modal">
+        <button class="modal-close-btn" onclick="closeModal('supportModal')">&times;</button>
+        <div class="modal-header">
+            <h2 class="modal-title">💬 Fale com o Suporte</h2>
+            <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.5rem">
+                Tem alguma dúvida ou encontrou um problema? Envie uma mensagem para nossa equipe.
+            </p>
+        </div>
+        <div class="modal-body">
+            <form action="#" method="POST">
+                @csrf
+                <div class="modal-form-group">
+                    <label class="modal-form-label">Assunto</label>
+                    <select class="modal-form-control" name="assunto" required>
+                        <option value="">Selecione um assunto...</option>
+                        <option value="duvida">Dúvida sobre o sistema</option>
+                        <option value="problema">Relatar um erro técnico</option>
+                        <option value="sugestao">Sugestão de melhoria</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+
+                <div class="modal-form-group">
+                    <label class="modal-form-label">Mensagem</label>
+                    <textarea class="modal-form-control" name="mensagem" rows="5" placeholder="Descreva detalhadamente como podemos ajudar..." required></textarea>
+                </div>
+
+                <div style="text-align: right; margin-top: 1.5rem;">
+                    <button type="button" class="btn" style="background: var(--light-gray); color: var(--dark); margin-right: 0.5rem;" onclick="closeModal('supportModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- FUNÇÕES PARA DROPDOWN E MODAIS ---
+
+    function toggleDropdown(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        const isActive = dropdown.classList.contains('active');
+
+        // Fecha outros dropdowns se houver
+        closeAllDropdowns();
+
+        if (!isActive) {
+            dropdown.classList.add('active');
+
+            // Opcional: Adiciona listener para fechar ao clicar fora
+            document.addEventListener('click', closeDropdownOnClickOutside);
+        } else {
+            document.removeEventListener('click', closeDropdownOnClickOutside);
+        }
+    }
+
+    function closeAllDropdowns() {
+        document.querySelectorAll('.notification-dropdown.active').forEach(drop => {
+            drop.classList.remove('active');
+        });
+    }
+
+    function closeDropdownOnClickOutside(event) {
+        const dropdown = document.getElementById('notificationDropdown');
+        const notiBtn = document.getElementById('notiBtn');
+
+        if (!dropdown.contains(event.target) && !notiBtn.contains(event.target)) {
+            dropdown.classList.remove('active');
+            document.removeEventListener('click', closeDropdownOnClickOutside);
+        }
+    }
+
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
+
+    // --- NOVAS FUNÇÕES PARA OS MODAIS ---
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Evita rolagem da página de fundo
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Restaura rolagem
+        }
+    }
+
+    // Fechar modal se clicar fora dele (no overlay escuro)
+    document.querySelectorAll('.custom-modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    });
+</script>
 <!-- Scripts -->
 <script>
     function toggleSidebar() {
