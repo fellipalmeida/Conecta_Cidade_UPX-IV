@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         .reporte-container {
-            max-width: 1200px;
+            max-width: 1250px;
             margin: 0 auto;
             padding: 2rem;
         }

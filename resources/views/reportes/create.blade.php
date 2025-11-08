@@ -576,7 +576,7 @@
                 <div class="form-section">
                     <h2 class="section-title">
                         <span>📷</span>
-                        Imagem (Opcional)
+                        Imagem <span class="required">*</span>
                     </h2>
 
                     <div class="file-upload">
@@ -585,7 +585,9 @@
                                id="imagem"
                                name="imagem"
                                accept="image/*"
-                               onchange="previewImagem(event)">
+                               onchange="previewImagem(event)"
+                               required
+                        >
                         <label for="imagem" class="file-upload-label">
                             <div class="file-upload-icon">📷</div>
                             <div class="file-upload-text">Clique para selecionar uma imagem</div>
