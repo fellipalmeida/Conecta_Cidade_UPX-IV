@@ -440,9 +440,15 @@
 
 
         <div class="reporte-header">
-            <span class="protocolo-badge">Protocolo: {{ $reporte->protocolo }}</span>
-
-            <h1 class="reporte-title">{{ $reporte->titulo }}</h1>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <div>
+                    <span class="protocolo-badge">Protocolo: {{ $reporte->protocolo }}</span>
+                    <h1 class="reporte-title">{{ $reporte->titulo }}</h1>
+                </div>
+                <a href="{{ route('reportes.index') }}" class="btn btn-secondary">
+                    ← Voltar
+                </a>
+            </div>
 
             <div class="reporte-meta">
                 <div class="meta-item">
@@ -478,13 +484,7 @@
                 </div>
             </div>
 
-            @if(session('user_id') == $reporte->user_id)
-                <div class="action-buttons">
-                    <a href="{{ route('reportes.meus') }}" class="btn btn-secondary">
-                        ← Meus Reportes
-                    </a>
-                </div>
-            @endif
+
         </div>
 
         <div class="content-grid">

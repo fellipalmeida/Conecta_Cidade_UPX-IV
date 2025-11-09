@@ -493,6 +493,7 @@
             <div class="reportes-grid">
                 @foreach($reportes as $reporte)
                     <div class="reporte-card">
+
                         @if($reporte->imagem)
                             <img src="{{ asset($reporte->imagem) }}" alt="{{ $reporte->titulo }}" class="reporte-image">
                         @else
@@ -534,6 +535,11 @@
                         {{ str_replace('_', ' ', $reporte->status) }}
                     </span>
                             </div>
+                            @if(session('user_tipo') === 'admin')
+                                <a href="{{ route('reportes.edit-admin', $reporte->id) }}" class="btn btn-primary" style="width: 100%; margin-top: 1rem; text-align: center; display: block;">
+                                    🛠️ Gerenciar (Admin)
+                                </a>
+                            @endif
                         </div>
                     </div>
                 @endforeach

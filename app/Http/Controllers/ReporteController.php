@@ -321,4 +321,63 @@ class ReporteController extends Controller
             ]);
         }
     }
+    public function editAdmin($id)
+    {
+        // A segurança já é feita pelo middleware 'admin' na rota
+
+        $reporte = DB::table('reportes')
+            ->select(
+                'reportes.*',
+                'reportes.prioridade as urgencia',
+                'reportes.foto as imagem',
+                'users.name as usuario_nome',
+                'users.email as usuario_email',
+                'reportes.endereco as localizacao',
+                'categorias.nome as categoria_nome',
+                'categorias.icone as categoria_icone'
+            )
+            ->join('users', 'reportes.user_id', '=', 'users.id')
+            ->join('categorias', 'reportes.categoria_id', '=', 'categorias.id')
+            ->where('reportes.id', $id)
+            ->first();
+
+        if (!$reporte) {
+            abort(404, 'Reporte não encontrado');
+        }
+
+        // Retorna a view que você salvou em resources/views/administrador/admin.blade.php
+        return view('administrador.admin', compact('reporte'));
+    }
+
+    /**
+     * [ADMIN] Salva as alterações de status e urgência
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pendente,em_analise,em_andamento,resolvido,rejeitado',
+            'urgencia' => 'required|in:baixa,media,alta',
+            'admin_note' => 'nullable|string|max:1000'
+        ]);
+
+        // Busca o reporte para ter o ID do dono (para notificação)
+        $reporte = DB::table('reportes')->where('id', $id)->first();
+        if (!$reporte) { abort(404); }
+
+        // Atualiza no banco
+        DB::table('reportes')->where('id', $id)->update([
+            'status' => $request->status,
+            'prioridade' => $request->urgencia,
+            'updated_at' => now()
+        ]);
+
+        // (Opcional) Se você tiver a tabela notifications, envia notificação ao usuário
+        if ($request->filled('admin_note')) {
+            // Insira aqui o código de notificação se sua tabela existir
+            // DB::table('notifications')->insert([...]);
+        }
+
+        return redirect()->route('reportes.edit-admin', $id)
+            ->with('success', 'Status do reporte atualizado com sucesso!');
+    }
 }

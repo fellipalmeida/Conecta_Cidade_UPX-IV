@@ -31,7 +31,7 @@ class DashboardController extends Controller
                 ->where('status', 'resolvido')
                 ->count(),
 
-            'total_votos' => DB::table('votos')
+            'total_votos' => DB::table('proposta_votos')
                 ->where('user_id', $userId)
                 ->count(),
 
@@ -58,9 +58,9 @@ class DashboardController extends Controller
             ->limit(3)
             ->get();
 
-        $votosUsuario = DB::table('votos')
+        $votosUsuario = DB::table('proposta_votos')
             ->where('user_id', $userId)
-            ->pluck('voto', 'proposta_id')
+            ->pluck('tipo_voto', 'proposta_id')
             ->toArray();
 
         foreach ($propostasEmVotacao as $proposta) {

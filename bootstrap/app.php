@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Registrar middlewares com alias
         $middleware->alias([
             'auth' => AuthMiddleware::class,
-            'admin' => AdminMiddleware::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'guest' => GuestMiddleware::class,
         ]);
     })

@@ -67,9 +67,15 @@ Route::get('/propostas/{id}', [PropostaController::class, 'show'])->name('propos
 // --- FIM DAS ROTAS DE PROPOSTAS ---
 
 
-// Rotas de Admin
+
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    // Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    // Route::get('/reportes', [AdminController::class, 'reportes'])->name('admin.reportes');
-    // Route::post('/reportes/{id}/atualizar-status', [AdminController::class, 'atualizarStatus'])->name('admin.reportes.atualizar');
+
+    // Tela de gerenciamento do reporte (GET)
+    Route::get('/reportes/{id}/gerenciar', [ReporteController::class, 'editAdmin'])
+        ->name('reportes.edit-admin');
+
+    // Ação de atualizar o status (PATCH)
+    Route::patch('/reportes/{id}/status', [ReporteController::class, 'updateStatus'])
+        ->name('reportes.update-status');
+
 });

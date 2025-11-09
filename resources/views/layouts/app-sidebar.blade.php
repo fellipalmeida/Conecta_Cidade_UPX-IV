@@ -7,13 +7,11 @@
     <title>@yield('title', 'Conecta Cidade - Participação Cidadã')</title>
     <link rel="icon" href="https://www.svgrepo.com/download/478646/infinity-symbol.svg" type="image/svg+xml">
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 
-    <!-- CSS -->
     <style>
         * {
             margin: 0;
@@ -639,9 +637,9 @@
 </head>
 <body>
 <div class="layout-container">
-    <!-- Sidebar -->
+
     <aside class="sidebar" id="sidebar">
-        <!-- Logo -->
+
         <div class="sidebar-header">
             <a href="{{ route('dashboard') }}" class="sidebar-logo">
                 <div class="" style="position: relative; top: 4px"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-infinity" viewBox="0 0 16 16">
@@ -651,7 +649,6 @@
             </a>
         </div>
 
-        <!-- User Profile -->
         <div class="sidebar-user">
             <div class="sidebar-user-info">
                 <div class="sidebar-user-avatar">
@@ -678,21 +675,24 @@
 
             <div class="sidebar-menu-section">
                 <div class="sidebar-menu-title">Reportes</div>
+
                 <a href="{{ route('reportes.create') }}" class="sidebar-menu-item {{ request()->routeIs('reportes.create') ? 'active' : '' }}">
                     <span class="sidebar-menu-icon">➕</span>
-                    <span>Novo Reporte</span>
+                    <span>Criar Reporte</span>
                 </a>
                 <a href="{{ route('reportes.meus') }}" class="sidebar-menu-item {{ request()->routeIs('reportes.meus') ? 'active' : '' }}">
                     <span class="sidebar-menu-icon">📋</span>
                     <span>Meus Reportes</span>
                 </a>
-{{--                <a href="{{ route('reportes.index') }}" class="sidebar-menu-item {{ request()->routeIs('reportes.index') ? 'active' : '' }}">--}}
-{{--                    <span class="sidebar-menu-icon">📍</span>--}}
-{{--                    <span>Todos os Reportes</span>--}}
-{{--                </a>--}}
+                @if(session('user_tipo') === 'admin')
+                    <a href="{{ route('reportes.index') }}" class="sidebar-menu-item {{ request()->routeIs('reportes.index') ? 'active' : '' }}">
+                        <span class="sidebar-menu-icon">🛠️</span>
+                        <span>Gerenciar Reportes</span>
+                    </a>
+                @endif
             </div>
 
-            <!-- Propostas -->
+
             <div class="sidebar-menu-section">
                 <div class="sidebar-menu-title">Propostas</div>
 
@@ -710,26 +710,6 @@
                 </a>
             </div>
 
-            @if(session('user_tipo') === 'admin')
-                <!-- Admin -->
-                <div class="sidebar-menu-section">
-                    <div class="sidebar-menu-title">Administração</div>
-                    <a href="#" class="sidebar-menu-item">
-                        <span class="sidebar-menu-icon">👥</span>
-                        <span>Usuários</span>
-                    </a>
-                    <a href="#" class="sidebar-menu-item">
-                        <span class="sidebar-menu-icon">📊</span>
-                        <span>Relatórios</span>
-                    </a>
-                    <a href="#" class="sidebar-menu-item">
-                        <span class="sidebar-menu-icon">⚙️</span>
-                        <span>Configurações</span>
-                    </a>
-                </div>
-            @endif
-
-            <!-- Conta -->
             <div class="sidebar-menu-section">
                 <div class="sidebar-menu-title">Conta</div>
                 <a href="{{ route('profile.show') }}" class="sidebar-menu-item {{ request()->routeIs('profile.show') ? 'active' : '' }}">
@@ -747,12 +727,10 @@
         </nav>
     </aside>
 
-    <!-- Overlay Mobile -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- Top Header -->
+
         <header class="top-header" style=" padding: 19px 2rem;!important;">
             <div class="top-header-left">
                 <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
@@ -807,9 +785,8 @@
             </div>
         </header>
 
-        <!-- Content Area -->
         <main class="content-area">
-            <!-- Alerts -->
+
             @if(session('success'))
                 <div class="alert alert-success">
                     <span>✓</span>
@@ -827,7 +804,6 @@
             @yield('content')
         </main>
 
-        <!-- Footer -->
         <footer class="footer">
             <p>&copy; {{ date('Y') }} Conecta Cidade - Code Crafters. Todos os direitos reservados.</p>
         </footer>
@@ -873,19 +849,16 @@
 </div>
 
 <script>
-    // --- FUNÇÕES PARA DROPDOWN E MODAIS ---
 
     function toggleDropdown(dropdownId) {
         const dropdown = document.getElementById(dropdownId);
         const isActive = dropdown.classList.contains('active');
 
-        // Fecha outros dropdowns se houver
         closeAllDropdowns();
 
         if (!isActive) {
             dropdown.classList.add('active');
 
-            // Opcional: Adiciona listener para fechar ao clicar fora
             document.addEventListener('click', closeDropdownOnClickOutside);
         } else {
             document.removeEventListener('click', closeDropdownOnClickOutside);
@@ -916,12 +889,11 @@
         overlay.classList.toggle('active');
     }
 
-    // --- NOVAS FUNÇÕES PARA OS MODAIS ---
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Evita rolagem da página de fundo
+            document.body.style.overflow = 'hidden';
         }
     }
 
@@ -929,11 +901,10 @@
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.classList.remove('active');
-            document.body.style.overflow = 'auto'; // Restaura rolagem
+            document.body.style.overflow = 'auto';
         }
     }
 
-    // Fechar modal se clicar fora dele (no overlay escuro)
     document.querySelectorAll('.custom-modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', function(e) {
             if (e.target === this) {
@@ -943,7 +914,7 @@
         });
     });
 </script>
-<!-- Scripts -->
+
 <script>
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
@@ -953,7 +924,7 @@
         overlay.classList.toggle('active');
     }
 
-    // Fechar sidebar ao clicar em um link (mobile)
+
     document.querySelectorAll('.sidebar-menu-item').forEach(item => {
         item.addEventListener('click', function() {
             if (window.innerWidth <= 968) {
