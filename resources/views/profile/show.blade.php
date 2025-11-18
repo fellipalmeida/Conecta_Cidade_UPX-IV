@@ -209,7 +209,6 @@
                                class="form-control"
                                id="password_confirmation"
                                name="password_confirmation">
-                        {{-- O erro de confirmação já aparece no campo 'password' --}}
                     </div>
                 </div>
 

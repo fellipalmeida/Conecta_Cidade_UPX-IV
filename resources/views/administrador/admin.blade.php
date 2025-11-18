@@ -143,6 +143,56 @@
         .btn-secondary:hover {
             background: #e5e7eb;
         }
+
+        /* --- ESTILOS DE MÍDIA DINÂMICA (COPIADOS) --- */
+        .media-flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .media-thumbnail-wrapper {
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: #f3f4f6;
+        }
+
+        .media-single-wrapper {
+            width: 100%;
+            max-height: 500px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: #f3f4f6;
+        }
+
+        .reporte-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .media-single-wrapper .reporte-media {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            max-height: 500px;
+            cursor: default;
+        }
+        /* --- FIM ESTILOS DE MÍDIA --- */
+
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 @endsection
 
@@ -182,11 +232,39 @@
                     <h3 style="font-size: 1.1rem; color: #1f2937; margin-bottom: 0.5rem;">{{ $reporte->titulo }}</h3>
                     <p style="white-space: pre-wrap; color: #4b5563; line-height: 1.6;">{{ $reporte->descricao }}</p>
 
-                    @if($reporte->imagem)
-                        <div style="margin-top: 1.5rem;">
-                            <h4 style="font-size: 1rem; color: #374151; margin-bottom: 0.5rem;">Imagem Anexada:</h4>
-                            <img src="{{ asset($reporte->imagem) }}" alt="Imagem do reporte" style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    @if (!empty($reporte->all_media))
+                        <h4 style="font-size: 1rem; color: #374151; margin-bottom: 0.5rem; margin-top: 1.5rem;">
+                            Anexos
+                        </h4>
+
+                        @php
+                            $mediaCount = count($reporte->all_media);
+                            $isSingleMedia = ($mediaCount === 1);
+                            $wrapperClass = $isSingleMedia ? 'media-single-wrapper' : 'media-thumbnail-wrapper';
+                            $containerStyle = $isSingleMedia ? 'margin-top: 1.5rem; max-width: 600px; margin-left: auto; margin-right: auto;' : 'display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.5rem;';
+                        @endphp
+
+                        <div style="{{ $containerStyle }}">
+                            @foreach ($reporte->all_media as $media)
+                                <div class="{{ $wrapperClass }}">
+                                    @if ($media['type'] === 'video')
+                                        <video controls class="reporte-media" style="cursor: default;">
+                                            <source src="{{ asset($media['path']) }}" type="video/mp4">
+                                            Seu navegador não suporta a tag de vídeo.
+                                        </video>
+                                    @else
+                                        <img src="{{ asset($media['path']) }}"
+                                             alt="Mídia do Reporte"
+                                             class="reporte-media"
+                                             style="{{ $isSingleMedia ? 'object-fit: contain;' : 'object-fit: cover;' }}">
+                                    @endif
+                                </div>
+                            @endforeach
                         </div>
+                    @else
+                        <p style="font-size: 0.9rem; color: #6b7280; margin-top: 1.5rem;">
+                            Nenhum arquivo de mídia anexado a este reporte.
+                        </p>
                     @endif
                 </div>
 
@@ -267,5 +345,8 @@
                 .openPopup();
         });
         @endif
+
+        // As funções de modal de imagem não são necessárias aqui, mas o JS de geolocalização sim.
+        // A função abrirModal foi removida do Admin para simplificar, já que não há modal de ampliação aqui.
     </script>
 @endsection

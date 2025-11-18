@@ -163,17 +163,49 @@
             white-space: pre-wrap;
         }
 
-        .reporte-image {
-            width: 100%;
+        /* Estilos de Contêiner de Mídia Dinâmico */
+        .media-flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .media-thumbnail-wrapper {
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
             border-radius: 8px;
-            margin-top: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: #f3f4f6;
+        }
+
+        .media-single-wrapper {
+            width: 100%;
+            max-height: 500px; /* Limita a altura para evitar abuso */
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: #f3f4f6;
+        }
+
+        .reporte-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Recorta para preencher o thumbnail */
             cursor: pointer;
             transition: transform 0.2s;
         }
 
-        .reporte-image:hover {
-            transform: scale(1.02);
+        .media-single-wrapper .reporte-media {
+            width: 100%;
+            height: auto; /* Permite que o aspecto seja mantido */
+            object-fit: contain; /* Garante que toda a mídia seja visível */
+            max-height: 500px;
         }
+        /* Fim dos Estilos de Contêiner de Mídia Dinâmico */
+
 
         #map {
             height: 300px;
@@ -493,11 +525,43 @@
                     <h2 class="card-title">Descrição do Problema</h2>
                     <p class="descricao-text">{{ $reporte->descricao }}</p>
 
-                    @if($reporte->imagem)
-                        <img src="{{ asset($reporte->imagem) }}"
-                             alt="Imagem do reporte"
-                             class="reporte-image"
-                             onclick="abrirModal(this.src)">
+                    @if (!empty($reporte->all_media))
+                        <h2 class="card-title" style="margin-top: 1.5rem;">Anexos</h2>
+
+                        @php
+                            $mediaCount = count($reporte->all_media);
+                            $isSingleMedia = ($mediaCount === 1);
+                            $wrapperClass = $isSingleMedia ? 'media-single-wrapper' : 'media-thumbnail-wrapper';
+                            $containerStyle = $isSingleMedia ? 'margin-top: 1.5rem; max-width: 600px; margin-left: auto; margin-right: auto;' : 'display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.5rem;';
+                        @endphp
+
+                        <div style="{{ $containerStyle }}">
+                            @foreach ($reporte->all_media as $media)
+                                <div class="{{ $wrapperClass }}">
+                                    @if ($media['type'] === 'video')
+                                        <video controls class="reporte-media" style="cursor: default;">
+                                            <source src="{{ asset($media['path']) }}" type="video/mp4">
+                                            Seu navegador não suporta a tag de vídeo.
+                                        </video>
+                                    @else
+                                        <img src="{{ asset($media['path']) }}"
+                                             alt="Mídia do Reporte"
+                                             class="reporte-media"
+                                             onclick="abrirModal(this.src)"
+                                             style="{{ $isSingleMedia ? 'object-fit: contain;' : 'object-fit: cover;' }}">
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <p style="font-size: 0.85rem; color: #6b7280; text-align: center; margin-top: 0.5rem;">
+                            @if ($isSingleMedia && $reporte->all_media[0]['type'] === 'image')
+                                Clique na imagem para ampliar.
+                            @elseif (!$isSingleMedia)
+                                Imagens podem ser ampliadas com um clique.
+                            @endif
+                        </p>
+
                     @endif
                 </div>
 
@@ -513,7 +577,6 @@
                     @endif
                 </div>
 
-                <!-- Comentários -->
                 <div class="comentarios-section" style="margin-bottom: 10px;">
                     <h2 class="card-title">Comentários ({{ $comentarios->count() }})</h2>
 
@@ -554,36 +617,36 @@
             </div>
 
 
-                <div class="card">
-                    <h3 class="card-title">Informações</h3>
-                    <ul class="info-list">
-                        <li class="info-item">
-                            <span class="info-label">Criado em</span>
-                            <span class="info-value">{{ \Carbon\Carbon::parse($reporte->created_at)->format('d/m/Y') }}</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">Última atualização</span>
-                            <span class="info-value">{{ \Carbon\Carbon::parse($reporte->updated_at)->format('d/m/Y') }}</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">Categoria</span>
-                            <span class="info-value">{{ $reporte->categoria_nome }}</span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">Urgência</span>
-                            <span class="info-value urgencia-badge urgencia-{{ $reporte->urgencia }}">
+            <div class="card">
+                <h3 class="card-title">Informações</h3>
+                <ul class="info-list">
+                    <li class="info-item">
+                        <span class="info-label">Criado em</span>
+                        <span class="info-value">{{ \Carbon\Carbon::parse($reporte->created_at)->format('d/m/Y') }}</span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label">Última atualização</span>
+                        <span class="info-value">{{ \Carbon\Carbon::parse($reporte->updated_at)->format('d/m/Y') }}</span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label">Categoria</span>
+                        <span class="info-value">{{ $reporte->categoria_nome }}</span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label">Urgência</span>
+                        <span class="info-value urgencia-badge urgencia-{{ $reporte->urgencia }}">
                             {{ ucfirst($reporte->urgencia) }}
                         </span>
-                        </li>
-                        <li class="info-item">
-                            <span class="info-label">Status</span>
-                            <span class="info-value">
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label">Status</span>
+                        <span class="info-value">
                             <span class="status-badge status-{{ $reporte->status }}">
                                 {{ str_replace('_', ' ', $reporte->status) }}
                             </span>
                         </span>
-                        </li>
-                    </ul>
+                    </li>
+                </ul>
 
 
             </div>
@@ -615,8 +678,11 @@
         @endif
 
         function abrirModal(src) {
-            document.getElementById('imageModal').style.display = 'block';
-            document.getElementById('modalImage').src = src;
+            const isVideo = src.match(/\.(mp4|mov|avi|wmv|webm)$/i);
+            if (!isVideo) {
+                document.getElementById('imageModal').style.display = 'block';
+                document.getElementById('modalImage').src = src;
+            }
         }
 
         function fecharModal() {

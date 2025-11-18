@@ -218,9 +218,17 @@
             margin-top: 1rem;
         }
 
+        .map-search-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
         .map-search {
             position: relative;
-            margin-bottom: 1rem;
+            flex: 1;
+            display: flex;
+            gap: 10px;
         }
 
         .map-search-input {
@@ -232,16 +240,35 @@
         }
 
         .map-search-btn {
-            position: absolute;
-            right: 0.5rem;
-            top: 50%;
-            transform: translateY(-50%);
             padding: 0.5rem 1rem;
             background: #2563eb;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
+        }
+
+        .map-geo-btn { /* Novo estilo para o botão de geolocalização */
+            padding: 0.75rem 1rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .map-geo-btn:hover {
+            background: #059669;
+        }
+
+        .map-geo-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
 
         .file-upload {
@@ -289,13 +316,44 @@
 
         .preview-container {
             margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .preview-image {
-            max-width: 300px;
-            max-height: 300px;
+        .preview-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #374151;
+        }
+
+        .preview-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .form-actions {
@@ -353,6 +411,19 @@
             }
 
             .btn {
+                width: 100%;
+            }
+
+            .map-search-controls {
+                flex-direction: column;
+            }
+
+            .map-search {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .map-search-btn {
                 width: 100%;
             }
         }
@@ -545,16 +616,24 @@
                             Endereço ou Referência
                             <span class="required">*</span>
                         </label>
-                        <div class="map-search">
-                            <input type="text"
-                                   class="map-search-input form-control @error('localizacao') error @enderror"
-                                   id="localizacao"
-                                   name="localizacao"
-                                   value="{{ old('localizacao') }}"
-                                   placeholder="Ex: Rua Principal, 123 - Centro"
-                                   required>
-                            <button type="button" class="map-search-btn" onclick="buscarEndereco()">
-                                Buscar
+                        <div class="map-search-controls">
+                            <div class="map-search">
+                                <input type="text"
+                                       class="map-search-input form-control @error('localizacao') error @enderror"
+                                       id="localizacao"
+                                       name="localizacao"
+                                       value="{{ old('localizacao') }}"
+                                       placeholder="Ex: Rua Principal, 123 - Centro"
+                                       required>
+                                <button type="button" class="map-search-btn" onclick="buscarEndereco()" style="position: static; transform: none;">
+                                    Buscar
+                                </button>
+                            </div>
+                            <button type="button" class="map-geo-btn" onclick="pegarLocalizacaoAtual()">
+                                <span>Localização Atual</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                                </svg>
                             </button>
                         </div>
                         @error('localizacao')
@@ -562,7 +641,7 @@
                         @enderror
                     </div>
                     <div class="form-hint">
-                        Clique no mapa para marcar a localização exata do problema
+                        Clique no mapa para marcar a localização exata do problema ou use o botão **GPS**
                     </div>
 
                     <div id="map"></div>
@@ -576,35 +655,37 @@
                 <div class="form-section">
                     <h2 class="section-title">
                         <span>📷</span>
-                        Imagem <span class="required">*</span>
+                        Arquivos (Máx. 5) <span class="required">*</span>
                     </h2>
 
                     <div class="file-upload">
                         <input type="file"
                                class="file-upload-input"
                                id="imagem"
-                               name="imagem"
-                               accept="image/*"
-                               onchange="previewImagem(event)"
+                               name="imagens[]"
+                               accept="image/*,video/*"
+                               onchange="handleFiles(event)"
+                               multiple
                                required
                         >
                         <label for="imagem" class="file-upload-label">
                             <div class="file-upload-icon">📷</div>
-                            <div class="file-upload-text">Clique para selecionar uma imagem</div>
-                            <div class="file-upload-hint">JPG, PNG ou GIF - Máximo 5MB</div>
+                            <div class="file-upload-text">Clique para selecionar até 5 arquivos</div>
+                            <div class="file-upload-hint">Imagens (JPG, PNG, GIF) ou Vídeos (MP4, MOV). Máximo 5MB por arquivo.</div>
                         </label>
                     </div>
 
                     <div class="preview-container" id="preview-container" style="display: none;">
-                        <img id="preview-image" class="preview-image" alt="Preview">
                     </div>
 
-                    @error('imagem')
+                    @error('imagens')
+                    <div class="error-message">{{ $message }}</div>
+                    @enderror
+                    @error('imagens.*')
                     <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <!-- Ações -->
                 <div class="form-actions">
                     <a href="{{ route('dashboard') }}" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" class="btn btn-primary">
@@ -621,6 +702,12 @@
     <script>
         var map;
         var marker;
+        let dataTransfer = new DataTransfer();
+        const MAX_FILES = 5;
+        const MAX_SIZE_MB = 5;
+        const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+        const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/mov', 'video/avi', 'video/wmv'];
+
 
         document.addEventListener('DOMContentLoaded', function() {
             var defaultLat = -23.5505;
@@ -634,6 +721,7 @@
 
             map.on('click', function(e) {
                 adicionarMarcador(e.latlng.lat, e.latlng.lng);
+                buscarNomeEndereco(e.latlng.lat, e.latlng.lng);
             });
 
             var oldLat = document.getElementById('latitude').value;
@@ -656,6 +744,88 @@
             map.setView([lat, lng], 15);
         }
 
+        function buscarNomeEndereco(lat, lng) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+                .then(response => response.json())
+                .then(data => {
+                    let endereco = `Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    if (data.address) {
+                        const addr = data.address;
+
+                        let partes = [];
+
+                        if (addr.road) partes.push(addr.road);
+                        if (addr.house_number) partes.push(addr.house_number);
+
+                        if (partes.length > 0) {
+                            let parte2 = [];
+                            if (addr.neighbourhood) parte2.push(addr.neighbourhood);
+                            if (addr.city || addr.town || addr.village) parte2.push(addr.city || addr.town || addr.village);
+
+                            if (parte2.length > 0) {
+                                endereco = partes.join(', ') + ' - ' + parte2.join(', ');
+                            } else {
+                                endereco = partes.join(', ');
+                            }
+                        } else {
+
+                            endereco = data.display_name;
+                        }
+
+                    }
+                    document.getElementById('localizacao').value = endereco;
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar nome do endereço:', error);
+                    document.getElementById('localizacao').value = `Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                });
+        }
+
+        function pegarLocalizacaoAtual() {
+            if (!navigator.geolocation) {
+                alert('Geolocalização não é suportada por este navegador. Por favor, digite o endereço ou clique no mapa.');
+                return;
+            }
+
+            const geoBtn = document.querySelector('.map-geo-btn');
+            geoBtn.disabled = true;
+            geoBtn.innerHTML = 'Buscando...';
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    adicionarMarcador(lat, lng);
+                    buscarNomeEndereco(lat, lng);
+
+                    geoBtn.disabled = false;
+                    geoBtn.innerHTML = '<span>GPS</span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg>';
+                },
+                function(error) {
+                    let mensagem = 'Erro ao obter localização. Tente marcar manualmente no mapa.';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            mensagem = "Permissão de localização negada. Verifique as configurações do seu navegador/sistema. Lembre-se que alguns navegadores exigem **conexão HTTPS** para usar o GPS.";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            mensagem = "Informações de localização indisponíveis (satélites, Wi-Fi, ou rede de celular).";
+                            break;
+                        case error.TIMEOUT:
+                            mensagem = "A requisição de localização expirou. Tente novamente.";
+                            break;
+                        default:
+                            mensagem = "Erro desconhecido ao obter localização. Verifique se o GPS está ativo (em mobile) ou se você autorizou o uso da localização.";
+                            break;
+                    }
+
+                    alert("Localização Automática Falhou: " + mensagem);
+
+                    geoBtn.disabled = false;
+                    geoBtn.innerHTML = '<span>GPS</span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg>';
+                }
+            );
+        }
+
         function buscarEndereco() {
             var endereco = document.getElementById('localizacao').value;
 
@@ -671,6 +841,7 @@
                         var lat = parseFloat(data[0].lat);
                         var lng = parseFloat(data[0].lon);
                         adicionarMarcador(lat, lng);
+
                     } else {
                         alert('Endereço não encontrado. Tente marcar manualmente no mapa.');
                     }
@@ -681,32 +852,139 @@
                 });
         }
 
-        function previewImagem(event) {
-            var input = event.target;
-            var preview = document.getElementById('preview-image');
-            var container = document.getElementById('preview-container');
+        function handleFiles(event) {
+            const input = event.target;
+            const newFiles = input.files;
 
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
+            let hasError = false;
+            let tempTransfer = new DataTransfer();
 
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    container.style.display = 'block';
+            for (let i = 0; i < dataTransfer.files.length; i++) {
+                tempTransfer.items.add(dataTransfer.files[i]);
+            }
+
+            for (let i = 0; i < newFiles.length; i++) {
+                const file = newFiles[i];
+                const fileType = file.type;
+
+                if (!ALLOWED_TYPES.includes(fileType) && !ALLOWED_TYPES.some(type => fileType.startsWith(type.split('/')[0] + '/'))) {
+                    alert(`Tipo de arquivo não suportado: ${file.name}. Por favor, envie apenas imagens ou vídeos.`);
+                    hasError = true;
+                    break;
                 }
 
-                reader.readAsDataURL(input.files[0]);
+                if (file.size > MAX_SIZE_BYTES) {
+                    alert(`Tamanho máximo excedido: O arquivo ${file.name} tem mais de ${MAX_SIZE_MB}MB.`);
+                    hasError = true;
+                    break;
+                }
+
+                tempTransfer.items.add(file);
+            }
+
+            if (tempTransfer.files.length > MAX_FILES && !hasError) {
+                alert(`Limite de quantidade excedido: Você só pode anexar no máximo ${MAX_FILES} arquivos. (Total após seleção: ${tempTransfer.files.length})`);
+                input.value = null;
+                return;
+            }
+
+
+            if (!hasError) {
+                dataTransfer = tempTransfer;
+                input.files = dataTransfer.files;
             } else {
+                input.value = null;
+                return;
+            }
+
+            updatePreviews(dataTransfer.files);
+
+            if (dataTransfer.files.length > 0) {
+                document.getElementById('preview-container').style.display = 'flex';
+                input.removeAttribute('required');
+            } else {
+                document.getElementById('preview-container').style.display = 'none';
+                input.setAttribute('required', 'required');
+            }
+        }
+
+        function updatePreviews(files) {
+            const container = document.getElementById('preview-container');
+            container.innerHTML = '';
+
+            if (files.length === 0) {
                 container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'flex';
+
+            Array.from(files).forEach((file, index) => {
+                const fileType = file.type;
+                const previewWrapper = document.createElement('div');
+                previewWrapper.className = 'preview-wrapper';
+
+                if (fileType.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'preview-media';
+                        previewWrapper.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                } else if (fileType.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = URL.createObjectURL(file);
+                    video.className = 'preview-media';
+                    previewWrapper.appendChild(video);
+
+                    const overlay = document.createElement('div');
+                    overlay.innerHTML = '▶️';
+                    overlay.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; background: rgba(0,0,0,0.3);';
+                    previewWrapper.appendChild(overlay);
+                }
+
+                const removeBtn = document.createElement('button');
+                removeBtn.innerHTML = '✕';
+                removeBtn.className = 'remove-btn';
+                removeBtn.onclick = function(e) {
+                    e.preventDefault();
+                    removeFile(index);
+                };
+                previewWrapper.appendChild(removeBtn);
+
+                container.appendChild(previewWrapper);
+            });
+        }
+
+        function removeFile(index) {
+            dataTransfer.items.remove(index);
+
+            const input = document.getElementById('imagem');
+            input.files = dataTransfer.files;
+
+            updatePreviews(dataTransfer.files);
+
+            if (dataTransfer.files.length === 0) {
+                input.setAttribute('required', 'required');
             }
         }
 
         document.getElementById('reporteForm').addEventListener('submit', function(e) {
             var lat = document.getElementById('latitude').value;
             var lng = document.getElementById('longitude').value;
+            const input = document.getElementById('imagem');
 
             if (!lat || !lng) {
                 e.preventDefault();
-                alert('Por favor, marque a localização do problema no mapa');
+                alert('Por favor, marque a localização do problema no mapa ou use o botão GPS');
+                return false;
+            }
+
+            if (input.files.length === 0) {
+                e.preventDefault();
+                alert('Por favor, anexe pelo menos um arquivo (imagem ou vídeo).');
                 return false;
             }
         });

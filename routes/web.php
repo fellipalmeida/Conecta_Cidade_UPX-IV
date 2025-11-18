@@ -9,10 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropostaController;
 
 
-// Página inicial
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
-// Rotas de Autenticação
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

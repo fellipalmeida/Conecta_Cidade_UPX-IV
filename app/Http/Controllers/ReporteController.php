@@ -69,9 +69,6 @@ class ReporteController extends Controller
         return view('reportes.create', compact('categorias'));
     }
 
-    /**
-     * Salva novo reporte
-     */
     public function store(Request $request)
     {
         if (!session('user_id')) {
@@ -83,25 +80,54 @@ class ReporteController extends Controller
             'titulo' => 'required|string|max:200',
             'descricao' => 'required|string',
             'categoria_id' => 'required|exists:categorias,id',
-            'localizacao' => 'required|string|max:255', // <-- MUDOU DE 'endereco'
+            'localizacao' => 'required|string|max:255',
             'referencia' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'urgencia' => 'required|in:baixa,media,alta,urgente', // <-- MUDOU DE 'prioridade'
-            'imagem' => 'nullable|image|max:5120' // <-- MUDOU DE 'foto'
+            'urgencia' => 'required|in:baixa,media,alta,urgente',
+
+            // Regras de validação para múltiplos arquivos/vídeos
+            'imagens' => 'required|array|max:5',
+            'imagens.*' => 'file|mimes:jpg,jpeg,png,gif,mp4,mov,avi,wmv|max:5120'
         ]);
 
         // Gerar protocolo único
         $protocolo = $this->gerarProtocolo();
 
-        // Upload da imagem
         $fotoPath = null;
-        if ($request->hasFile('imagem')) { // <-- MUDOU DE 'foto'
-            $foto = $request->file('imagem'); // <-- MUDOU DE 'foto'
-            $nomeFoto = time() . '_' . Str::slug($request->titulo) . '.' . $foto->getClientOriginalExtension();
-            $foto->move(public_path('uploads/reportes'), $nomeFoto);
-            $fotoPath = 'uploads/reportes/' . $nomeFoto;
+        $mediaType = 'image';
+        $allMedia = []; // Array para armazenar todos os arquivos e seus tipos
+
+        if ($request->hasFile('imagens')) {
+            $arquivos = $request->file('imagens');
+
+            foreach ($arquivos as $index => $arquivo) {
+                if ($arquivo->isValid()) {
+                    $ext = $arquivo->getClientOriginalExtension();
+                    $fileType = Str::startsWith($arquivo->getClientMimeType(), 'video') ? 'video' : 'image';
+                    $nomeArquivo = time() . '_' . $index . '_' . Str::slug($request->titulo) . '.' . $ext;
+
+                    $arquivo->move(public_path('uploads/reportes'), $nomeArquivo);
+                    $path = 'uploads/reportes/' . $nomeArquivo;
+
+                    // Adiciona o arquivo à lista completa
+                    $allMedia[] = [
+                        'path' => $path,
+                        'type' => $fileType
+                    ];
+
+                    // Define o primeiro arquivo como a foto principal e o mediaType
+                    if ($index === 0) {
+                        $fotoPath = $path;
+                        $mediaType = $fileType;
+                    }
+                }
+            }
         }
+
+        // Salva a lista completa de arquivos como JSON na coluna 'referencia'
+        // NOTA: Esta é a solução temporária para armazenar múltiplos anexos.
+        $jsonMediaList = json_encode($allMedia);
 
         // Inserir reporte
         $reporteId = DB::table('reportes')->insertGetId([
@@ -109,14 +135,15 @@ class ReporteController extends Controller
             'categoria_id' => $request->categoria_id,
             'titulo' => $request->titulo,
             'descricao' => $request->descricao,
-            'endereco' => $request->localizacao, // <-- MUDOU DE $request->endereco
-            'referencia' => $request->referencia,
+            'endereco' => $request->localizacao,
+            'referencia' => $jsonMediaList, // <-- JSON DE TODOS OS ARQUIVOS
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
-            'prioridade' => $request->urgencia, // <-- MUDOU DE $request->prioridade
+            'prioridade' => $request->urgencia,
             'status' => 'pendente',
             'protocolo' => $protocolo,
             'foto' => $fotoPath,
+            'media_type' => $mediaType,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -128,21 +155,19 @@ class ReporteController extends Controller
             ->with('success', 'Reporte criado com sucesso! Protocolo: ' . $protocolo);
     }
 
-    /**
-     * Exibe detalhes de um reporte
-     */
     public function show($id)
     {
         $reporte = DB::table('reportes')
             ->select(
                 'reportes.*',
                 'reportes.prioridade as urgencia',
-                'reportes.foto as imagem', // <-- ADICIONE ESTA LINHA
+                'reportes.foto as imagem',
                 'users.name as usuario_nome',
                 'reportes.endereco as localizacao',
                 'users.email as usuario_email',
                 'categorias.nome as categoria_nome',
-                'categorias.icone as categoria_icone'
+                'categorias.icone as categoria_icone',
+                DB::raw("COALESCE(reportes.media_type, 'image') as media_type")
             )
             ->join('users', 'reportes.user_id', '=', 'users.id')
             ->join('categorias', 'reportes.categoria_id', '=', 'categorias.id')
@@ -153,6 +178,25 @@ class ReporteController extends Controller
             abort(404, 'Reporte não encontrado');
         }
 
+        // --- NOVO BLOCO: Processar a lista completa de mídia (armazenada em 'referencia') ---
+        $allMedia = [];
+        if (!empty($reporte->referencia)) {
+            $decodedMedia = json_decode($reporte->referencia, true);
+            if (is_array($decodedMedia)) {
+                $allMedia = $decodedMedia;
+            }
+        }
+
+        // Se a lista JSON não foi encontrada (reporte antigo), usa o campo foto principal
+        if (empty($allMedia) && $reporte->imagem) {
+            $allMedia[] = [
+                'path' => $reporte->imagem,
+                'type' => $reporte->media_type ?? 'image'
+            ];
+        }
+        $reporte->all_media = $allMedia;
+        // ---------------------------------------------------------------------------------
+
         // Buscar comentários
         $comentarios = DB::table('comentarios_reportes')
             ->select('comentarios_reportes.*', 'users.name as usuario_nome')
@@ -160,12 +204,6 @@ class ReporteController extends Controller
             ->where('comentarios_reportes.reporte_id', $id)
             ->orderBy('comentarios_reportes.created_at', 'desc')
             ->get();
-
-        // Incrementar visualizações (apenas se a coluna existir)
-        // Comentado por enquanto - adicione a coluna visualizacoes se quiser usar
-        // DB::table('reportes')
-        //     ->where('id', $id)
-        //     ->increment('visualizacoes');
 
         return view('reportes.show', compact('reporte', 'comentarios'));
     }
@@ -280,9 +318,6 @@ class ReporteController extends Controller
         return redirect()->route('reportes.show', $reporte->id);
     }
 
-    /**
-     * Gera protocolo único
-     */
     private function gerarProtocolo()
     {
         do {
@@ -302,7 +337,7 @@ class ReporteController extends Controller
 
         // Buscar todos os admins
         $admins = DB::table('users')
-            ->where('tipo', 'admin')  // Mudado de 'is_admin' para 'tipo'
+            ->where('tipo', 'admin')
             ->get();
 
         foreach ($admins as $admin) {
@@ -321,9 +356,10 @@ class ReporteController extends Controller
             ]);
         }
     }
+
     public function editAdmin($id)
     {
-        // A segurança já é feita pelo middleware 'admin' na rota
+
 
         $reporte = DB::table('reportes')
             ->select(
@@ -334,7 +370,8 @@ class ReporteController extends Controller
                 'users.email as usuario_email',
                 'reportes.endereco as localizacao',
                 'categorias.nome as categoria_nome',
-                'categorias.icone as categoria_icone'
+                'categorias.icone as categoria_icone',
+                DB::raw("COALESCE(reportes.media_type, 'image') as media_type") // <-- Busca media_type
             )
             ->join('users', 'reportes.user_id', '=', 'users.id')
             ->join('categorias', 'reportes.categoria_id', '=', 'categorias.id')
@@ -344,6 +381,26 @@ class ReporteController extends Controller
         if (!$reporte) {
             abort(404, 'Reporte não encontrado');
         }
+
+        // --- NOVO BLOCO: Processar a lista completa de mídia (armazenada em 'referencia') ---
+        $allMedia = [];
+        if (!empty($reporte->referencia)) {
+            $decodedMedia = json_decode($reporte->referencia, true);
+            if (is_array($decodedMedia)) {
+                $allMedia = $decodedMedia;
+            }
+        }
+
+        // Se a lista JSON não foi encontrada (reporte antigo), usa o campo foto principal
+        if (empty($allMedia) && $reporte->imagem) {
+            $allMedia[] = [
+                'path' => $reporte->imagem,
+                'type' => $reporte->media_type ?? 'image'
+            ];
+        }
+        $reporte->all_media = $allMedia; // <-- Atribui a lista de mídia ao objeto
+        // ---------------------------------------------------------------------------------
+
 
         // Retorna a view que você salvou em resources/views/administrador/admin.blade.php
         return view('administrador.admin', compact('reporte'));
@@ -371,7 +428,6 @@ class ReporteController extends Controller
             'updated_at' => now()
         ]);
 
-        // (Opcional) Se você tiver a tabela notifications, envia notificação ao usuário
         if ($request->filled('admin_note')) {
             // Insira aqui o código de notificação se sua tabela existir
             // DB::table('notifications')->insert([...]);

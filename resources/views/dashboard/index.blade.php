@@ -163,6 +163,8 @@
             display: flex;
             gap: 1rem;
             align-items: center;
+            /* Permite quebra de linha para mobile */
+            flex-wrap: wrap;
         }
 
         .badge {
@@ -289,18 +291,43 @@
             color: #6b7280;
         }
 
+        /* --- MEDIA QUERIES PARA RESPONSIVIDADE --- */
+
+        /* 968px e abaixo: Tablet para Mobile Grande */
         @media (max-width: 968px) {
+            /* Faz as duas colunas principais se empilharem */
             .content-grid {
                 grid-template-columns: 1fr;
             }
         }
 
+        /* 768px e abaixo: Celular Grande */
         @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem; /* Reduz o padding */
+            }
+
+            /* Stats grid: 4 colunas -> 2 colunas */
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
             }
 
+            /* Quick actions: auto-fit com minmax já ajuda, mas forçamos 1 coluna aqui */
             .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            /* Ajuste para Atividades Recentes e Meus Últimos Reportes */
+            .reporte-header {
+                flex-direction: column; /* Empilha os itens (info + badge) */
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        /* 500px e abaixo: Celular Pequeno (força stats grid a empilhar totalmente) */
+        @media (max-width: 500px) {
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
         }

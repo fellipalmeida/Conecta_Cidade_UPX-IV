@@ -78,6 +78,40 @@
             background: #f3f4f6;
             color: #6b7280;
         }
+
+        /* --- RESPONSIVIDADE (NOVO) --- */
+        @media (max-width: 768px) {
+            .votacoes-container {
+                padding: 1rem;
+            }
+            .proposta-card {
+                /* Empilha o conteúdo (info + status do voto) */
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .proposta-info {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            .proposta-meta {
+                /* Garante que os metadados (apoios, neutros, etc.) quebrem bem */
+                gap: 0.75rem;
+            }
+            .proposta-card > div:last-child {
+                /* Ajusta o contêiner do voto para ocupar a largura total no mobile */
+                width: 100%;
+                margin-left: 0;
+                text-align: left;
+                padding-top: 1rem;
+                border-top: 1px solid #f3f4f6;
+            }
+            .meu-voto {
+                /* O badge do voto se ajusta à nova largura */
+                display: block;
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 @endsection
 
