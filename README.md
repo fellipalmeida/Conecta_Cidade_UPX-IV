@@ -1,44 +1,67 @@
-# Conecta_Cidade_UPX-IV
+# Conecta Cidade 🏙️
 
-🎓 Projeto acadêmico desenvolvido no Centro Universitário FACENS
+> Projeto Acadêmico - UPX IV | Centro Universitário FACENS
 
-## ♾️ Conecta Cidade: Plataforma de Participação Cidadã em Mobilidade Urbana
+O **Conecta Cidade** é uma plataforma web de participação cidadã focada em mobilidade urbana. O sistema permite que cidadãos reportem problemas na infraestrutura da cidade (como buracos, falta de iluminação, sinalização) e participem democraticamente votando em propostas de melhoria.
 
-### 🎯 Sobre o Projeto
+O projeto está alinhado aos **Objetivos de Desenvolvimento Sustentável (ODS)** da ONU, especificamente ODS 11 (Cidades Sustentáveis) e ODS 17 (Parcerias).
 
-O **Conecta Cidade** é uma plataforma web desenvolvida para fortalecer a **participação cidadã na gestão da mobilidade urbana**.
+## 🚀 Funcionalidades
 
-A solução visa criar um canal digital direto entre a população e os gestores públicos, facilitando a identificação rápida de problemas e a priorização de soluções com base na demanda real da comunidade.
+### 👤 Para o Cidadão
+* **Autenticação:** Cadastro e Login seguros.
+* **Dashboard:** Visão geral de reportes e estatísticas pessoais.
+* **Reportes:** Criação de reportes com geolocalização (mapa interativo), upload de fotos/vídeos e categorização (Ex: Buracos, Semáforos, Iluminação).
+* **Acompanhamento:** Visualização do status dos reportes (Pendente, Em Análise, Resolvido).
+* **Votação:** Sistema de votação (Apoiar/Não Apoiar/Neutro) em propostas de melhoria urbana.
+* **Comentários:** Interação em reportes e propostas.
 
-#### Objetivos Principais
+### 🛡️ Para o Administrador
+* **Gestão de Reportes:** Alteração de status (Pendente -> Resolvido) e nível de urgência.
+* **Visualização Geral:** Mapa de calor e lista de problemas reportados.
 
-* **Reporte de Problemas:** Permite aos cidadãos relatar problemas urbanos (buracos na rua, semáforos, iluminação) com geolocalização, fotos/vídeos e um sistema de protocolo para acompanhamento.
-* **Votação em Propostas:** Inclui um sistema para que usuários votem em propostas de melhoria urbana criadas pela comunidade ou pela prefeitura.
-* **Alinhamento com ODS:** O projeto contribui diretamente para os Objetivos de Desenvolvimento Sustentável da ONU: **ODS 11 (Cidades e Comunidades Sustentáveis)** e **ODS 17 (Parcerias e Meios de Implementação)**.
+## 🛠️ Tecnologias Utilizadas
 
-### 💻 Tecnologias Utilizadas
+* **Backend:** PHP 8.2+, Laravel Framework.
+* **Frontend:** Blade Templates, JavaScript (ES6), TailwindCSS e Bootstrap.
+* **Banco de Dados:** MySQL / MariaDB.
+* **Mapas:** Leaflet.js e OpenStreetMap.
+* **Gerenciamento de Pacotes:** Composer (PHP) e NPM (Node.js).
 
-* **Framework:** Laravel
-* **Linguagens:** PHP, JavaScript, HTML e CSS
-* **Banco de Dados:** MariaDB / MySQL
+## 💻 Pré-requisitos
 
----
+Para rodar o projeto localmente, você precisará ter instalado:
+* [PHP](https://www.php.net/) (Versão 8.2 ou superior)
+* [Composer](https://getcomposer.org/)
+* [Node.js](https://nodejs.org/) & NPM
+* [MySQL](https://www.mysql.com/) (ou MariaDB/XAMPP/Laragon)
 
-### 🛠️ Instalação e Configuração
+## 🔧 Como Instalar e Rodar
 
-Siga os passos abaixo para configurar e executar o projeto em sua máquina local.
+Siga o passo a passo abaixo para configurar o ambiente de desenvolvimento:
 
-#### Requisitos
-
-Você precisará ter instalado:
-* **PHP** (versão 8.2+ é a versão alvo, conforme `composer.json`)
-* **MariaDB** ou **MySQL**
-* **Composer**
-* **Node.js** e **npm**
-
-#### Clonar Repositório e Instalar Dependências
-
-**1. Clone o repositório**
 ```bash
-git clone [seu-link-do-repositorio]
-cd Conecta_Cidade_UPX-IV
+git clone [https://github.com/seu-usuario/conecta-cidade.git](https://github.com/seu-usuario/conecta-cidade.git)
+cd conecta-cidade
+
+2. Instalar Dependências do Backend (PHP)
+composer install
+
+3. Instalar Dependências do Frontend (JS/CSS)
+npm install
+
+4. Configurar Variáveis de Ambiente
+cp .env.example .env
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=conectacidade
+DB_USERNAME=seu username
+DB_PASSWORD= sua senha.
+
+5. Criar Banco de Dados e Rodar Migrations
+php artisan migrate
+
+6. Iniciar o Projeto
+php artisan serve
